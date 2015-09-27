@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -85,10 +86,43 @@ def depthFirstSearch(problem):
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    ----
+    Start: (34, 16)
+    Is the start a goal? False
+    Start's successors: [((34, 15), 'South', 1), ((33, 16), 'West', 1)]
+    Path found with total cost of 999999 in 0.0 seconds
     """
     "*** YOUR CODE HERE ***"
-    """
-    util.raiseNotDefined()
+    # Search actions
+    seaAction = []
+    # Record state waiting for being searched
+    waitList = []
+    # Depth first search stack
+    queue = util.Stack()
+    # Push the first item to the stack
+    waitList.append(problem.getStartState())
+    for x in problem.getSuccessors(problem.getStartState()):
+        queue.push(x)
+        waitList.append(x[0])
+
+    while not queue.isEmpty():
+        current = queue.pop()
+        print "current:", current[1]
+        seaAction.append(current[1])
+        if problem.isGoalState(current[0]):
+            print seaAction
+            return seaAction
+        print "next step:"
+        for x in problem.getSuccessors(current[0]):
+            print x
+
+            if x[1] not in seaAction and x[0] not in waitList:
+                queue.push(x)
+                waitList.append(x)
+
+    print seaAction
+    return seaAction
+    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
