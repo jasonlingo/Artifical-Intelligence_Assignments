@@ -1,0 +1,408 @@
+\documentclass[11pt]{article}
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{hyperref} 
+\usepackage{color}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{enumerate}
+\usepackage{amsmath,bm}
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin -20mm
+\textheight 240mm
+\textwidth 160mm
+
+
+
+
+\newcommand{\vw}{{\bf w}}
+\newcommand{\vx}{{\bf x}}
+\newcommand{\vy}{{\bf y}}
+\newcommand{\vxi}{{\bf x}_i}
+\newcommand{\yi}{y_i}
+\newcommand{\vxj}{{\bf x}_j}
+\newcommand{\vxn}{{\bf x}_n}
+\newcommand{\yj}{y_j}
+\newcommand{\ai}{\alpha_i}
+\newcommand{\aj}{\alpha_j}
+\newcommand{\X}{{\bf X}}
+\newcommand{\Y}{{\bf Y}}
+\newcommand{\vz}{{\bf z}}
+\newcommand{\msigma}{{\bf \Sigma}}
+\newcommand{\vmu}{{\bf \mu}}
+\newcommand{\vmuk}{{\bf \mu}_k}
+\newcommand{\msigmak}{{\bf \Sigma}_k}
+\newcommand{\vmuj}{{\bf \mu}_j}
+\newcommand{\msigmaj}{{\bf \Sigma}_j}
+\newcommand{\pij}{\pi_j}
+\newcommand{\pik}{\pi_k}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\el}{\mathcal{L}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\vxij}{{\bf x}_{ij}}
+\newcommand{\vt}{{\bf t}}
+\newcommand{\yh}{\hat{y}}
+\newcommand{\code}[1]{{\footnotesize \tt #1}}
+\newcommand{\alphai}{\alpha_i}
+
+
+
+\pagestyle{myheadings} 
+%\markboth{Homework 2}{Fall 2015 CS 475 Machine Learning: Homework 2} 
+
+
+\title{CS 435 Artificial Intelligence: Homework 2\\Game Playing\\}
+\author{Li-Yi Lin / llin34@jhu.edu}
+
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\noindent
+\textbf{Question 1-Depth First Search (DFS)}\\
+The Depth First Search (DFS) will keep searching the path to the destination by first exploring the neighbor nodes that have not been reached. It doesn't care about the cost. Therefore, DFS will not necessarily find the optimal solution. \\
+
+\noindent
+\textbf{tinyMaze: }\\
+$[$SearchAgent$]$ using function depthFirstSearch\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 10 in 0.0 seconds\\
+Search nodes expanded: 14\\
+Pacman emerges victorious! Score: 500\\
+Average Score: 500.0\\
+Scores:        500.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumMaze:}\\
+$[$SearchAgent$]$: using function depthFirstSearch\\
+$[$SearchAgent$]$: using problem type PositionSearchProblem\\
+Path found with total cost of 130 in 0.0 seconds\\
+Search nodes expanded: 144\\
+Pacman emerges victorious! Score: 380\\
+Average Score: 380.0\\
+Scores:        380.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{bigMaze:}\\
+$[$SearchAgent$]$: using function depthFirstSearch\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 210 in 0.0 seconds\\
+Search nodes expanded: 390\\
+Pacman emerges victorious! Score: 300\\
+Average Score: 300.0\\
+Scores:        300.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Question 2-Breadth First Search (BFS)}\\
+\textbf{tinyMaze:}\\
+$[$SearchAgent$]$ using function bfs\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 8 in 0.0 seconds\\
+Search nodes expanded: 15\\
+Pacman emerges victorious! Score: 502\\
+Average Score: 502.0\\
+Scores:        502.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumMaze:}\\
+$[$SearchAgent$]$ using function bfs\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 68 in 0.0 seconds\\
+Search nodes expanded: 269\\
+Pacman emerges victorious! Score: 442\\
+Average Score: 442.0\\
+Scores:        442.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{bigMaze:}\\
+$[$SearchAgent$]$ using function bfs\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 210 in 0.1 seconds\\
+Search nodes expanded: 620\\
+Pacman emerges victorious! Score: 300\\
+Average Score: 300.0\\
+Scores:        300.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Grad Stucent-Iterative Eeepening Search:}\\
+\textbf{tinyMaze:}\\
+$[$SearchAgent$]$ using function ids\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 10 in 0.0 seconds\\
+Search nodes expanded: 86\\
+Pacman emerges victorious! Score: 500\\
+Average Score: 500.0\\
+Scores:        500.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumMaze:}\\
+$[$SearchAgent$]$ using function ids\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 68 in 0.2 seconds\\
+Search nodes expanded: 8138\\
+Pacman emerges victorious! Score: 442\\
+Average Score: 442.0\\
+Scores:        442.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{bigMaze:}\\
+$[$SearchAgent$]$ using function ids\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 210 in 1.4 seconds\\
+Search nodes expanded: 60211\\
+Pacman emerges victorious! Score: 300\\
+Average Score: 300.0\\
+Scores:        300.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Question 3-Uniform Cost Search (UCS):}\\
+\textbf{mediumMaze:}\\
+$[$SearchAgent$]$ using function ucs\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 68 in 0.1 seconds\\
+Search nodes expanded: 269\\
+Pacman emerges victorious! Score: 442\\
+Average Score: 442.0\\
+Scores:        442.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumDottedMaze:}\\
+Path found with total cost of 1 in 0.0 seconds\\
+Search nodes expanded: 186\\
+Pacman emerges victorious! Score: 646\\
+Average Score: 646.0\\
+Scores:        646.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumScaryMaze:}\\
+Path found with total cost of 68719479864 in 0.0 seconds\\
+Search nodes expanded: 108\\
+Pacman emerges victorious! Score: 418\\
+Average Score: 418.0\\
+Scores:        418.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Grad Stucent-New Cost Fuction for UCS:}
+
+\noindent
+\textbf{mediumMaze:}\\
+Path found with total cost of 68 in 0.0 seconds\\
+Search nodes expanded: 259\\
+Pacman emerges victorious! Score: 442\\
+Average Score: 442.0\\
+Scores:        442.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumDottedMaze:}\\
+Path found with total cost of 74 in 0.0 seconds\\
+Search nodes expanded: 199\\
+Pacman emerges victorious! Score: 646\\
+Average Score: 646.0\\
+Scores:        646.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumScaryMaze:}\\
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Question 4-A* search using manhattanHeuristic:}\\
+\textbf{tinyMaze:}\\
+$[$SearchAgent$]$ using function astar and heuristic manhattanHeuristic\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 8 in 0.0 seconds\\
+Search nodes expanded: 14\\
+Pacman emerges victorious! Score: 502\\
+Average Score: 502.0\\
+Scores:        502.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumMaze:}\\
+$[$SearchAgent$]$ using function astar and heuristic manhattanHeuristic\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 68 in 0.0 seconds\\
+Search nodes expanded: 222\\
+Pacman emerges victorious! Score: 442\\
+Average Score: 442.0\\
+Scores:        442.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{bigMaze:}\\
+$[$SearchAgent$]$ using function astar and heuristic manhattanHeuristic\\
+$[$SearchAgent$]$ using problem type PositionSearchProblem\\
+Path found with total cost of 210 in 0.2 seconds\\
+Search nodes expanded: 549\\
+Pacman emerges victorious! Score: 300\\
+Average Score: 300.0\\
+Scores:        300.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Question 5-Solves the corners problem with a BFS agent:}\\
+\textbf{tinyCorners:}\\
+$[$SearchAgent$]$ using function bfs\\
+$[$SearchAgent$]$ using problem type CornersProblem\\
+Path found with total cost of 28 in 0.0 seconds\\
+Search nodes expanded: 252\\
+Pacman emerges victorious! Score: 512\\
+Average Score: 512.0\\
+Scores:        512.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumCorners:}\\
+$[$SearchAgent$]$ using function bfs\\
+$[$SearchAgent$]$ using problem type CornersProblem\\
+Path found with total cost of 106 in 0.2 seconds\\
+Search nodes expanded: 1966\\
+Pacman emerges victorious! Score: 434\\
+Average Score: 434.0\\
+Scores:        434.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Grad Student-Heuristic for corner proglem}\\
+Description\\
+
+\noindent
+\textbf{tinyCorners:}\\
+$[$SearchAgent$]$ using function aStarSearch and heuristic cornersHeuristic\\
+$[$SearchAgent$]$ using problem type CornersProblem\\
+Path found with total cost of 28 in 0.0 seconds\\
+Search nodes expanded: 169\\
+Pacman emerges victorious! Score: 512\\
+Average Score: 512.0\\
+Scores:        512.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{mediumCorners:}\\
+$[$SearchAgent$]$ using function astar and heuristic cornersHeuristic\\
+$[$SearchAgent$]$ using problem type CornersProblem\\
+Path found with total cost of 106 in 0.2 seconds\\
+Search nodes expanded: 701\\
+Pacman emerges victorious! Score: 434\\
+Average Score: 434.0\\
+Scores:        434.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Question 7-Solves the eating all the dots problem with A* with a null heuristic:}\\
+\textbf{testSearch:}\\
+$[$SearchAgent$]$ using function astar and heuristic nullHeuristic\\
+$[$SearchAgent$]$ using problem type FoodSearchProblem\\
+Path found with total cost of 7 in 0.0 seconds\\
+Search nodes expanded: 14\\
+Pacman emerges victorious! Score: 513\\
+Average Score: 513.0\\
+Scores:        513.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{trickySearch}\\
+$[$SearchAgent$]$ using function astar and heuristic nullHeuristic\\
+$[$SearchAgent$]$ using problem type FoodSearchProblem\\
+Path found with total cost of 60 in 75.8 seconds\\
+Search nodes expanded: 16688\\
+Pacman emerges victorious! Score: 570\\
+Average Score: 570.0\\
+Scores:        570.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\noindent
+\textbf{Grad Student-Solves the eating all the dots problem with A* with a foodHeuristic:}\\
+Description\\
+
+
+
+\noindent
+\textbf{testSearch:}\\
+Path found with total cost of 7 in 0.0 seconds\\
+Search nodes expanded: 12\\
+Pacman emerges victorious! Score: 513\\
+Average Score: 513.0\\
+Scores:        513.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+\noindent
+\textbf{trickySearch:}\\
+Path found with total cost of 60 in 17.0 seconds\\
+Search nodes expanded: 7209\\
+Pacman emerges victorious! Score: 570\\
+Average Score: 570.0\\
+Scores:        570.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
+
+
+
+\end{document}
+

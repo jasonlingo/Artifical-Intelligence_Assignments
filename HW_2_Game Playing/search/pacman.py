@@ -629,6 +629,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
     import __main__
     __main__.__dict__['_display'] = display
 
+
     rules = ClassicGameRules(timeout)
     games = []
 
