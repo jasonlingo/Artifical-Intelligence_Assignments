@@ -49,7 +49,7 @@
 \newcommand{\yh}{\hat{y}}
 \newcommand{\code}[1]{{\footnotesize \tt #1}}
 \newcommand{\alphai}{\alpha_i}
-
+\graphicspath{ {pic/} }
 
 
 \pagestyle{myheadings} 
@@ -106,6 +106,9 @@ Record:        Win\\
 \newpage
 \noindent
 \textbf{Question 2-Breadth First Search (BFS)}\\
+If the cost of every step is the same, then BFS will always find the optimal path (with lowest cost) from the starting position to the destination.\\
+
+\noindent
 \textbf{tinyMaze:}\\
 $[$SearchAgent$]$ using function bfs\\
 $[$SearchAgent$]$ using problem type PositionSearchProblem\\
@@ -218,7 +221,20 @@ Record:        Win\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \noindent
-\textbf{Grad Stucent-New Cost Fuction for UCS:}
+\textbf{Grad Stucent-New Cost Fuction for UCS:}\\
+In this question set, I implemented a new cost function for UCS algorithm to solve the maze problem. The new cost function considers two modes of cost calculation: one is for finding all the food, and another is for escapeing the nearby ghosts. The cost function will fist find the nearest food and ghost and compare the distances from the current position to them. If the distance between the nearest ghost and the current position is short than that of the nearest food, then the mode will be "escape". Otherwise, the mode will be "eat". The mode will switch during the searching process according to the position of the pacman.\\
+
+\noindent
+In the "eat" mode, the cost will simply be the manhattan distance between the nearest food and the current position of the pacman. In the "escape" mode, the cost function will first find the nearest ghosts locat at each side (north, south, east, and west) of the pacman. If the nearest ghost is at the north side, then the cost function will assign more cost when the next state is going north (one ghost might belong to two sides of the pacman). For finding the nearest ghost at the north side, the equation will be 
+$$\text{northNearest = maxX + maxY - util.manhattanDistance(pos, g)}$$
+where "pos" is the current position of the pacman, "g" is the position of a ghost, and maxX and maxY are the length and width of the maze. The more the value, the nearer the ghost is. The cost function will use the same equation to find the value of each ghost at four sides. The cost function will then assign cost according to vertical direction and horizontal direction. And when the nearest ghost is at the north or south side, the cost for ghost will be:
+$$\text{ghostCost += (northNearest + 1.0) / (southNearest + 1.0)}$$
+Or, if the nearest ghost is at the east or west side, the cost for the ghost will be:
+$$\text{ghostCost += (eastNearest + 1.0) / (westNearest + 1.0)}$$
+The intuition for these equation is from the "StayEastSearchAgent" and "StayWestSearchAgent". For example, when a nearest ghost is at the north side, then "northNearest" must be larger than "southNearest". So when next step is going north, the cost will increase. Hence, it will encourage the pacman to go south.\\
+
+\noindent
+If the cost function only considers the food, then the pacman will encounter the ghost very easily. So the problem is divided into several subproblems. Some part of the searching process is escaping the ghost, and when the ghost is far away, the searching process will switch to finding foods. Although this cost function might make the pacman to walk more steps, it can make the pacman safer since the pacman can have the ghost-escaping ability. This assigment only calculate the cost and find the path before the game starts. If it can recalculate the cost each time when the ghosts move, that might be more interesting.\\
 
 \noindent
 \textbf{mediumMaze:}\\
@@ -233,7 +249,7 @@ Record:        Win\\
 \noindent
 \textbf{mediumDottedMaze:}\\
 Path found with total cost of 74 in 0.0 seconds\\
-Search nodes expanded: 199\\
+Search nodes expanded: 146\\
 Pacman emerges victorious! Score: 646\\
 Average Score: 646.0\\
 Scores:        646.0\\
@@ -242,12 +258,13 @@ Record:        Win\\
 
 \noindent
 \textbf{mediumScaryMaze:}\\
-
-
-
-
-
-
+Path found with total cost of 92 in 0.0 seconds\\
+Search nodes expanded: 222\\
+Pacman emerges victorious! Score: 418\\
+Average Score: 418.0\\
+Scores:        418.0\\
+Win Rate:      1/1 (1.00)\\
+Record:        Win\\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,27 +336,30 @@ Record:        Win\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \noindent
-\textbf{Grad Student-Heuristic for corner proglem}\\
-Description\\
+\textbf{Grad Student-Heuristic for corner problem}\\
+For the corner problem, I implemented a new heuristic that needs 169 and 701 search nodes expanded for "tinyCorners" and "mediumCorners" respectively (for more detail, please see the result shown below). The basic idea of the heuristic is that it will keep accumulating the manhattan distance between the current position to the nearest unvisited corner and from the nearest unvisited corner to its nearest unvisited corner and so on until all the corners have been reached. See the following example:\\
+
+\begin{center}
+\includegraphics[scale=0.8]{cornerHeuristic}\\
+\end{center}
+
+\noindent
+The red line means the manhattan distance and the arrow means the order that it finds the corners. I designed this heuristic because I thought that the cost should not only relate to the nearest unvisited corner but also relate to other unvisited corners. This algorithm is a consistent cost function since when the pacman walks one step, the cost will change at most one and the cost for one step is one, making $h(n) \leq c(n, a, n') + h(n')$ hold true.\\
 
 \noindent
 \textbf{tinyCorners:}\\
-$[$SearchAgent$]$ using function aStarSearch and heuristic cornersHeuristic\\
-$[$SearchAgent$]$ using problem type CornersProblem\\
-Path found with total cost of 28 in 0.0 seconds\\
-Search nodes expanded: 169\\
-Pacman emerges victorious! Score: 512\\
-Average Score: 512.0\\
-Scores:        512.0\\
+Path found with total cost of 30 in 0.0 seconds\\
+Search nodes expanded: 201\\
+Pacman emerges victorious! Score: 510\\
+Average Score: 510.0\\
+Scores:        510.0\\
 Win Rate:      1/1 (1.00)\\
 Record:        Win\\
 
 \noindent
 \textbf{mediumCorners:}\\
-$[$SearchAgent$]$ using function astar and heuristic cornersHeuristic\\
-$[$SearchAgent$]$ using problem type CornersProblem\\
 Path found with total cost of 106 in 0.2 seconds\\
-Search nodes expanded: 701\\
+Search nodes expanded: 736\\
 Pacman emerges victorious! Score: 434\\
 Average Score: 434.0\\
 Scores:        434.0\\

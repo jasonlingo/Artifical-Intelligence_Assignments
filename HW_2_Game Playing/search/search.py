@@ -20,7 +20,6 @@ Pacman agents (in searchAgents.py).
 import util
 import sys
 
-
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -112,7 +111,6 @@ def depthFirstSearch(problem):
     print "Error: Cannot find a path using DSF!!"
     return []
 
-
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
@@ -139,7 +137,6 @@ def breadthFirstSearch(problem):
     print "Error: Cannot find a path using BSF!!"
     return []
 
-
 def IterativeDeepingSearch(problem):
     """
     Search the graph using depth first search but with different depth
@@ -155,7 +152,6 @@ def IterativeDeepingSearch(problem):
         if actions != []:
             return actions
         depth += 1
-
 
 def DepthLimitedSearch(problem, limit):
     """
@@ -184,9 +180,7 @@ def DepthLimitedSearch(problem, limit):
                 if nextState not in visited:
                     visited.append(nextState)
                     fringe.push((nextState, actions + [action], height + 1))
-
     return []
-
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -243,14 +237,17 @@ def uniformCostSearchNewCostFunc(problem):
         if wall[1] > maxY:
             maxY = wall[1]
     
+    consistency ={}
     while not fringe.isEmpty():
         curState, actions, totalCost = fringe.pop()
         if problem.isGoalState(curState):
+            for x in sorted(consistency, reverse=True):
+                print x, consistency[x]
             return actions
 
         successors = problem.getSuccessors(curState)
         for nextState, action, _ in successors:
-            cost = newCostFunc(nextState, food, ghost, maxX, maxY)
+            cost = newCostFunc(nextState, food, ghost, maxX, maxY, consistency)
             # Get the cost if we reach the successor by the current actions.
             newCost = totalCost + cost + 1 # 1 is for going to its successor
 
@@ -261,8 +258,15 @@ def uniformCostSearchNewCostFunc(problem):
     print "Error: Cannot find a path using uniformCostSearch!!"
     return []    
 
-def newCostFunc(pos, food, ghost, maxX, maxY):
-    """New cost function for UCS algorithm"""
+def newCostFunc(pos, food, ghost, maxX, maxY, consistency):
+    """
+    New cost function for UCS algorithm.
+
+    Args:
+      (tuple(int)) pos: the xy-coordinates of the pacman.
+      (list) food, ghost: the list of foods' and ghosts' coordinates.
+      (int) maxX, maxY: the width and length of this maze.
+    """
     # Calculate the cost for food (it is also the distance from the current position)
     foodCost = 0
     if len(food) > 0:    
@@ -286,28 +290,30 @@ def newCostFunc(pos, food, ghost, maxX, maxY):
                 nearestGhostDist = dist
 
             if g[0] > pos[0]: # The ghost is at the east side of current position
-                if maxX + maxY - (g[0] - pos[0]) > eastNearest:
-                    eastNearest = maxX + maxY - (g[0] - pos[0])
-            elif g[0] < pos[0]: # The ghost is at the west side of current position
-                if maxX + maxY - (g[0] - pos[0]) > westNearest:
-                    westNearest = maxX + maxY - (pos[0] - g[0])                
+                if maxX + maxY - util.manhattanDistance(pos, g) > eastNearest:
+                    eastNearest = maxX + maxY - util.manhattanDistance(pos, g)
+            if g[0] < pos[0]: # The ghost is at the west side of current position
+                if maxX + maxY - util.manhattanDistance(pos, g) > westNearest:
+                    westNearest = maxX + maxY - util.manhattanDistance(pos, g)                
             if g[1] >= pos[1]: # The ghost is at the north of side current position
-                if maxX + maxY - (g[1] - pos[1]) > northNearest:
-                    northNearest = maxX + maxY - (g[1] - pos[1])                
-            elif g[1] < pos[1]: # The ghost is at the south side of current position
-                if maxX + maxY - (g[1] - pos[1]) > southNearest:
-                    southNearest = maxX + maxY - (pos[1] - g[1])                
-        
-        # Find which side has the nearest ghost. 
+                if maxX + maxY - util.manhattanDistance(pos, g) > northNearest:
+                    northNearest = maxX + maxY - util.manhattanDistance(pos, g)                
+            if g[1] < pos[1]: # The ghost is at the south side of current position
+                if maxX + maxY - util.manhattanDistance(pos, g) > southNearest:
+                    southNearest = maxX + maxY - util.manhattanDistance(pos, g)
+    
         mostGhost = max(northNearest, southNearest, westNearest, eastNearest)
         if northNearest == mostGhost or southNearest == mostGhost: # should go south or north
-            ghostCost += pos[1] * northNearest / (southNearest + 1.0) # add 1 in order to prevent it from dividing by zero
+            ghostCost += (northNearest + 1.0) / (southNearest + 1.0) # add 1 in order to prevent it from dividing by zero
         if westNearest == mostGhost or eastNearest == mostGhost: # should go east or west
-            ghostCost += pos[0] * eastNearest / (westNearest + 1.0) 
+            ghostCost += (eastNearest + 1.0) / (westNearest + 1.0)             
 
     # Decide the final cost by the nearest distance of ghost and food.
     # If a food is closer than all other ghosts, then return the food cost, else return the ghost cost.       
     finalCost = ghostCost if nearestGhostDist <= foodCost else foodCost
+    if nearestGhostDist <= foodCost:
+        consistency[pos] = ghostCost
+
     return finalCost
 
 def nullHeuristic(state, problem=None):

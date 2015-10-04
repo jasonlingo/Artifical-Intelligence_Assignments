@@ -490,34 +490,108 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    # CornerHeuristic description:
-    #   This heuristic considers the manhattan distance from current state's position 
-    #   to the nearest unvisited corner plus the manhattan distances from the nearest 
-    #   corner to its nearest unvisited corner and so on until all the corners is reached. 
     position, visitedCorner = state
-    if visitedCorner == [True, True, True, True]:
-        return 0
 
-    newPos = position
+
     unvisitedCorner = []
     for i in range(len(visitedCorner)):
         if not visitedCorner[i]:
             unvisitedCorner.append(corners[i])
+    
+    yCoordinates = []
+    xCoordinates = []
 
-    # Calculate heuristic value
+    for corner in unvisitedCorner:
+        xCoordinates.append(corner[0])
+        yCoordinates.append(corner[1])
+
+    xCoordinates.append(position[0])
+    yCoordinates.append(position[1])
+
     heuValue = 0
-    while len(unvisitedCorner) > 0:
-        nearestDist = util.manhattanDistance(newPos, unvisitedCorner[0])
-        # Find the nearest food and the distance from current location to it
-        minIdx = 0
-        for i in range(len(unvisitedCorner)):
-            dist = util.manhattanDistance(newPos, unvisitedCorner[i])
-            if dist < nearestDist:
-                nearestDist = dist
-                minIdx = i
-        heuValue += nearestDist
-        newPos = unvisitedCorner.pop(i)
+
+    heuValue += max(xCoordinates) - min(xCoordinates)
+    heuValue += max(yCoordinates) - min(yCoordinates)
+
+    
+    # totDist = 0
+    # if len(unvisitedCorner) > 0:
+    #     nearestDist = util.manhattanDistance(position, unvisitedCorner[0])
+    #     for corner in unvisitedCorner:
+    #         dist = util.manhattanDistance(position, corner)
+    #         totDist += dist
+    #         if dist < nearestDist:
+    #             nearestDist = dist
+    #     heuValue += dist
+
+    # heuValue = totDist
     return heuValue
+    # Calculate heuristic value
+    # heuValue = 0
+    # if len(unvisitedCorner) == 1:
+    #     # When there is only one unvisited corner, the cost will be the manhattan distance 
+    #     # from the current position to that corner.
+    #     heuValue = util.manhattanDistance(position, unvisitedCorner[0])
+
+    # if len(unvisitedCorner) == 2:
+    #     # When there are two unvisited corner, the cost will be the manhattan distance between 
+    #     # the two corners and the manhattan distance from the current position to the nearest
+    #     # unvistied corner.
+    #     nearestDist = heuValue = util.manhattanDistance(unvisitedCorner[0], unvisitedCorner[1])
+    #     for corner in unvisitedCorner:
+    #         dist = util.manhattanDistance(position, corner)
+    #         if dist < nearestDist:
+    #             nearestDist = dist
+    #     heuValue += nearestDist
+
+    # if len(unvisitedCorner) == 3:
+    #     # When there are three unvisited corners, the cost will be the length of the sides connecting 
+    #     # the three corners + the manhattan distance from the current position to the nearest
+    #     # corners (excluding the unvisited corner in the middle).
+    #     diagonalPair = []
+    #     for i in range(3):
+    #         corner = unvisitedCorner[i]
+    #         for j in range(i+1, 3):
+    #             corner2 = unvisitedCorner[j]
+    #             if corner[0] == corner2[0]:
+    #                 heuValue += abs(corner[1] - corner2[1])
+    #             elif corner[1] == corner2[1]:
+    #                 heuValue += abs(corner[0] - corner2[0])
+    #             else:
+    #                 diagonalPair = [corner, corner2]
+    #     heuValue += min(util.manhattanDistance(position, diagonalPair[0]),\
+    #                     util.manhattanDistance(position, diagonalPair[1])   )
+
+    # if len(unvisitedCorner) == 4:
+    #     # When there are four unvisited corners, the cost will be the length of four sides connecting
+    #     # the corners and the manhattan distance between the current position to the nearest corner.
+    #     nearestDist = util.manhattanDistance(position, unvisitedCorner[0])
+    #     for corner in unvisitedCorner:
+    #         dist = util.manhattanDistance(position, corner)
+    #         if dist < nearestDist:
+    #             nearestDist = dist
+    #     heuValue += nearestDist
+    #     for i in range(4):
+    #         corner = unvisitedCorner[i]
+    #         for j in range(i+1, 4):
+    #             corner2 = unvisitedCorner[j]
+    #             if corner[0] == corner2[0]:
+    #                 heuValue += abs(corner[1] - corner2[1])
+    #             elif corner[1] == corner2[1]:
+    #                 heuValue += abs(corner[0] - corner2[0])
+
+    # if len(unvisitedCorner) > 0:
+    #     nearestDist = util.manhattanDistance(position, unvisitedCorner[0])
+    #     farestDist = util.manhattanDistance(position, unvisitedCorner[0])
+    #     for i in range(len(unvisitedCorner)):
+    #         corner = unvisitedCorner[i]
+    #         for j in range(i+1, len(unvisitedCorner)):
+    #             corner2 = unvisitedCorner[j]
+    #             if corner[0] == corner2[0]:
+    #                 heuValue += abs(corner[1] - corner2[1])
+    #             elif corner[1] == corner2[1]:
+    #                 heuValue += abs(corner[0] - corner2[0])
+    # return heuValue
 
 
 class AStarCornersAgent(SearchAgent):
@@ -612,24 +686,39 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    # This heuristic adopts a similar idea as we implemented in cornersHeuristic.
-    foodList = foodGrid.asList()[:] 
-    newPos = position
+    foodList = foodGrid.asList()
 
     # Calculate heuristic value
     heuValue = 0
-    while len(foodList) > 0:
-        nearestDist = util.manhattanDistance(newPos, foodList[0])
-        # Find the nearest food and the distance from current location to it
-        minIdx = 0
-        for i in range(len(foodList)):
-            dist = util.manhattanDistance(newPos, foodList[i])
-            if dist < nearestDist:
-                nearestDist = dist
-                minIdx = i
-        heuValue += nearestDist
-        newPos = foodList.pop(i)
+    
+    h = foodGrid.height
+    w = foodGrid.width
+    ct = 0
+    for x in range(w):
+      for y in range(h):
+        if foodGrid[x][y]:
+          ct = max(ct, abs(x-position[0]) + abs(y-position[1]))
+    return ct
+
+
+
+
+
+
+
     return heuValue
+
+    # while len(foodList) > 0:
+    #     nearestDist = util.manhattanDistance(newPos, foodList[0])
+    #     # Find the nearest food and the distance from current location to it
+    #     minIdx = 0
+    #     for i in range(len(foodList)):
+    #         dist = util.manhattanDistance(newPos, foodList[i])
+    #         if dist < nearestDist:
+    #             nearestDist = dist
+    #             minIdx = i
+    #     heuValue += nearestDist
+    #     newPos = foodList.pop(i)
 
 
 class ClosestDotSearchAgent(SearchAgent):
