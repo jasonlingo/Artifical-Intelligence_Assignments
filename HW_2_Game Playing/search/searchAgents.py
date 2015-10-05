@@ -492,12 +492,13 @@ def cornersHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     position, visitedCorner = state
 
-
+    # Find unvisited corners
     unvisitedCorner = []
     for i in range(len(visitedCorner)):
         if not visitedCorner[i]:
             unvisitedCorner.append(corners[i])
     
+    # Find the x and y coordinates of all corners and current position
     yCoordinates = []
     xCoordinates = []
 
@@ -508,6 +509,7 @@ def cornersHeuristic(state, problem):
     xCoordinates.append(position[0])
     yCoordinates.append(position[1])
 
+    # Calculate cost 
     heuValue = 0
 
     heuValue += max(xCoordinates) - min(xCoordinates)
@@ -526,72 +528,7 @@ def cornersHeuristic(state, problem):
 
     # heuValue = totDist
     return heuValue
-    # Calculate heuristic value
-    # heuValue = 0
-    # if len(unvisitedCorner) == 1:
-    #     # When there is only one unvisited corner, the cost will be the manhattan distance 
-    #     # from the current position to that corner.
-    #     heuValue = util.manhattanDistance(position, unvisitedCorner[0])
 
-    # if len(unvisitedCorner) == 2:
-    #     # When there are two unvisited corner, the cost will be the manhattan distance between 
-    #     # the two corners and the manhattan distance from the current position to the nearest
-    #     # unvistied corner.
-    #     nearestDist = heuValue = util.manhattanDistance(unvisitedCorner[0], unvisitedCorner[1])
-    #     for corner in unvisitedCorner:
-    #         dist = util.manhattanDistance(position, corner)
-    #         if dist < nearestDist:
-    #             nearestDist = dist
-    #     heuValue += nearestDist
-
-    # if len(unvisitedCorner) == 3:
-    #     # When there are three unvisited corners, the cost will be the length of the sides connecting 
-    #     # the three corners + the manhattan distance from the current position to the nearest
-    #     # corners (excluding the unvisited corner in the middle).
-    #     diagonalPair = []
-    #     for i in range(3):
-    #         corner = unvisitedCorner[i]
-    #         for j in range(i+1, 3):
-    #             corner2 = unvisitedCorner[j]
-    #             if corner[0] == corner2[0]:
-    #                 heuValue += abs(corner[1] - corner2[1])
-    #             elif corner[1] == corner2[1]:
-    #                 heuValue += abs(corner[0] - corner2[0])
-    #             else:
-    #                 diagonalPair = [corner, corner2]
-    #     heuValue += min(util.manhattanDistance(position, diagonalPair[0]),\
-    #                     util.manhattanDistance(position, diagonalPair[1])   )
-
-    # if len(unvisitedCorner) == 4:
-    #     # When there are four unvisited corners, the cost will be the length of four sides connecting
-    #     # the corners and the manhattan distance between the current position to the nearest corner.
-    #     nearestDist = util.manhattanDistance(position, unvisitedCorner[0])
-    #     for corner in unvisitedCorner:
-    #         dist = util.manhattanDistance(position, corner)
-    #         if dist < nearestDist:
-    #             nearestDist = dist
-    #     heuValue += nearestDist
-    #     for i in range(4):
-    #         corner = unvisitedCorner[i]
-    #         for j in range(i+1, 4):
-    #             corner2 = unvisitedCorner[j]
-    #             if corner[0] == corner2[0]:
-    #                 heuValue += abs(corner[1] - corner2[1])
-    #             elif corner[1] == corner2[1]:
-    #                 heuValue += abs(corner[0] - corner2[0])
-
-    # if len(unvisitedCorner) > 0:
-    #     nearestDist = util.manhattanDistance(position, unvisitedCorner[0])
-    #     farestDist = util.manhattanDistance(position, unvisitedCorner[0])
-    #     for i in range(len(unvisitedCorner)):
-    #         corner = unvisitedCorner[i]
-    #         for j in range(i+1, len(unvisitedCorner)):
-    #             corner2 = unvisitedCorner[j]
-    #             if corner[0] == corner2[0]:
-    #                 heuValue += abs(corner[1] - corner2[1])
-    #             elif corner[1] == corner2[1]:
-    #                 heuValue += abs(corner[0] - corner2[0])
-    # return heuValue
 
 
 class AStarCornersAgent(SearchAgent):
@@ -688,37 +625,26 @@ def foodHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     foodList = foodGrid.asList()
 
-    # Calculate heuristic value
-    heuValue = 0
-    
-    h = foodGrid.height
-    w = foodGrid.width
-    ct = 0
-    for x in range(w):
-      for y in range(h):
-        if foodGrid[x][y]:
-          ct = max(ct, abs(x-position[0]) + abs(y-position[1]))
-    return ct
+    farestDist = 0
+    if len(foodList) > 0:
+        farestDist = util.manhattanDistance(position, foodList[0])
+        for food in foodList[1:]:
+            # Calculate the maze distance
+            # Fist check whether the data is stored in the problem.heuristicInfo.
+            # If yes, then use it directly. If not, calculate the distance by using
+            # mazeDistance() function.
+            if (position, food) in problem.heuristicInfo:
+                mazeDist = problem.heuristicInfo[(position, food)]
+            else:
+                mazeDist = mazeDistance(position, food, problem.startingGameState)
+                problem.heuristicInfo[(position, food)] = mazeDist
+            # Update the farest maze distance
+            if mazeDist > farestDist:
+                farestDist = mazeDist
+
+    return farestDist
 
 
-
-
-
-
-
-    return heuValue
-
-    # while len(foodList) > 0:
-    #     nearestDist = util.manhattanDistance(newPos, foodList[0])
-    #     # Find the nearest food and the distance from current location to it
-    #     minIdx = 0
-    #     for i in range(len(foodList)):
-    #         dist = util.manhattanDistance(newPos, foodList[i])
-    #         if dist < nearestDist:
-    #             nearestDist = dist
-    #             minIdx = i
-    #     heuValue += nearestDist
-    #     newPos = foodList.pop(i)
 
 
 class ClosestDotSearchAgent(SearchAgent):

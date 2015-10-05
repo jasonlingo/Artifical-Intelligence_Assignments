@@ -337,29 +337,34 @@ Record:        Win\\
 \newpage
 \noindent
 \textbf{Grad Student-Heuristic for corner problem}\\
-For the corner problem, I implemented a new heuristic that needs 169 and 701 search nodes expanded for "tinyCorners" and "mediumCorners" respectively (for more detail, please see the result shown below). The basic idea of the heuristic is that it will keep accumulating the manhattan distance between the current position to the nearest unvisited corner and from the nearest unvisited corner to its nearest unvisited corner and so on until all the corners have been reached. See the following example:\\
+For the corner problem, I implemented a new heuristic that needs 179 and 931 search nodes expanded for "tinyCorners" and "mediumCorners" respectively (for more detail, please see the results shown below). The basic idea of this heuristic is to find the longest distance of corners and the current position for the vertical and horizontal aspects. See the following examples:
+%The basic idea of the heuristic is that it will keep accumulating the manhattan distance between the current position to the nearest unvisited corner and from the nearest unvisited corner to its nearest unvisited corner and so on until all the corners have been reached. See the following example:\\
 
 \begin{center}
-\includegraphics[scale=0.8]{cornerHeuristic}\\
+\includegraphics[scale=0.5]{corner1}
+\includegraphics[scale=0.5]{corner2}\\
+\text{}\\
+\includegraphics[scale=0.5]{corner3}
+\includegraphics[scale=0.5]{corner4}\\
 \end{center}
 
 \noindent
-The red line means the manhattan distance and the arrow means the order that it finds the corners. I designed this heuristic because I thought that the cost should not only relate to the nearest unvisited corner but also relate to other unvisited corners. This algorithm is a consistent cost function since when the pacman walks one step, the cost will change at most one and the cost for one step is one, making $h(n) \leq c(n, a, n') + h(n')$ hold true.\\
+The red line means the longest distance in the vertical and horizontal directions. I designed this heuristic because I thought that the cost should not only relate to the nearest unvisited corner but also relate to other unvisited corners. By only taking one distance in one direction into account, this algorithm is a consistent cost function since when the pacman walks one step, the heuristic cost (sum of the two distances) will change at most one and the cost for one step is one, making $h(n) \leq c(n, a, n') + h(n')$ hold true.\\
 
 \noindent
 \textbf{tinyCorners:}\\
-Path found with total cost of 30 in 0.0 seconds\\
-Search nodes expanded: 201\\
-Pacman emerges victorious! Score: 510\\
-Average Score: 510.0\\
-Scores:        510.0\\
+Path found with total cost of 28 in 0.0 seconds\\
+Search nodes expanded: 179\\
+Pacman emerges victorious! Score: 512\\
+Average Score: 512.0\\
+Scores:        512.0\\
 Win Rate:      1/1 (1.00)\\
 Record:        Win\\
 
 \noindent
 \textbf{mediumCorners:}\\
 Path found with total cost of 106 in 0.2 seconds\\
-Search nodes expanded: 736\\
+Search nodes expanded: 931\\
 Pacman emerges victorious! Score: 434\\
 Average Score: 434.0\\
 Scores:        434.0\\
@@ -398,14 +403,15 @@ Record:        Win\\
 \newpage
 \noindent
 \textbf{Grad Student-Solves the eating all the dots problem with A* with a foodHeuristic:}\\
-Description\\
+For this food problem, I implemented a heuristic that finds the farest distance from the current position to the farest food. For the distance calculation, I used mazeDistance function to find the actual distance between any two nodes. The heuristic needs 10 and 4239 search nodes expanded for the tinySearch and trickySearch mazes respectively (for more detail, please see the results shown below). I designed this heuristic because I thought that the heuristic cost function should consider the farest distance to a food. When a pacman reach a nearest food, it also need to go to the farest food eventually and that farest distance usually affects the final total step more than the nearest one does.\\
 
-
+\noindent
+This algorithm is consistent since when the pacman walks one step, the heuristic cost will change at most one and the cost for one step is still one, thus making $h(n) \leq c(n, a, n') + h(n')$ hold true.\\
 
 \noindent
 \textbf{testSearch:}\\
 Path found with total cost of 7 in 0.0 seconds\\
-Search nodes expanded: 12\\
+Search nodes expanded: 10\\
 Pacman emerges victorious! Score: 513\\
 Average Score: 513.0\\
 Scores:        513.0\\
@@ -414,15 +420,13 @@ Record:        Win\\
 
 \noindent
 \textbf{trickySearch:}\\
-Path found with total cost of 60 in 17.0 seconds\\
-Search nodes expanded: 7209\\
+Path found with total cost of 60 in 4.3 seconds\\
+Search nodes expanded: 4239\\
 Pacman emerges victorious! Score: 570\\
 Average Score: 570.0\\
 Scores:        570.0\\
 Win Rate:      1/1 (1.00)\\
 Record:        Win\\
-
-
 
 \end{document}
 
