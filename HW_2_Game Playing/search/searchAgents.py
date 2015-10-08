@@ -40,7 +40,6 @@ from game import Actions
 import util
 import time
 import search
-import sys
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -153,139 +152,7 @@ class PositionSearchProblem(search.SearchProblem):
         costFn: A function from a search state (tuple) to a non-negative number
         goal: A position in the gameState
         """
-        self.walls = gameState.getWalls()
-        self.startState = gameState.getPacmanPosition()
-        if start != None: self.startState = start
-        self.goal = goal
-        self.costFn = costFn
-        self.visualize = visualize
-        if warn and (gameState.getNumFood() != 1 or not gameState.hasFood(*goal)):
-            print 'Warning: this does not look like a regular search maze'
-
-        # For display purposes
-        self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
-
-    def getStartState(self):
-        return self.startState
-
-    def isGoalState(self, state):
-        isGoal = state == self.goal
-
-        # For display purposes only
-        if isGoal and self.visualize:
-            self._visitedlist.append(state)
-            import __main__
-            if '_display' in dir(__main__):
-                if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
-                    __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
-
-        return isGoal
-
-    def getSuccessors(self, state):
-        """
-        Returns successor states, the actions they require, and a cost of 1.
-
-         As noted in search.py:
-             For a given state, this should return a list of triples,
-         (successor, action, stepCost), where 'successor' is a
-         successor to the current state, 'action' is the action
-         required to get there, and 'stepCost' is the incremental
-         cost of expanding to that successor
-        """
-
-        successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            x,y = state
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                nextState = (nextx, nexty)
-                cost = self.costFn(nextState) 
-                successors.append( ( nextState, action, cost) )
-
-        # Bookkeeping for display purposes
-        self._expanded += 1 # DO NOT CHANGE
-        if state not in self._visited:
-            self._visited[state] = True
-            self._visitedlist.append(state)
-
-        return successors
-
-    def getCostOfActions(self, actions):
-        """
-        Returns the cost of a particular sequence of actions. If those actions
-        include an illegal move, return 999999.
-        """
-        if actions == None: return 999999
-        x,y= self.getStartState()
-        cost = 0
-        for action in actions:
-            # Check figure out the next state and see whether its' legal
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]: return 999999
-            cost += self.costFn((x,y))
-        return cost
-
-class StayEastSearchAgent(SearchAgent):
-    """
-    An agent for position search with a cost function that penalizes being in
-    positions on the West side of the board.
-
-    The cost function for stepping into a position (x,y) is 1/2^x.
-    """
-    def __init__(self):
-        self.searchFunction = search.uniformCostSearch
-        costFn = lambda pos: .5 ** pos[0]
-        self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
-
-class StayWestSearchAgent(SearchAgent):
-    """
-    An agent for position search with a cost function that penalizes being in
-    positions on the East side of the board.
-
-    The cost function for stepping into a position (x,y) is 2^x.
-    """
-    def __init__(self):
-        self.searchFunction = search.uniformCostSearch
-        costFn = lambda pos: 2 ** pos[0]
-        self.searchType = lambda state: PositionSearchProblem(state, costFn)
-
-def manhattanHeuristic(position, problem, info={}):
-    "The Manhattan distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-
-def euclideanHeuristic(position, problem, info={}):
-    "The Euclidean distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
-
-#####################################################
-# This portion is incomplete.  Time to write code!  #
-#####################################################
-class UCSPositionSearchProblem(search.SearchProblem):
-    """
-    A search problem defines the state space, start state, goal test, successor
-    function and cost function.  This search problem can be used to find paths
-    to a particular point on the pacman board.
-
-    The state space consists of (x,y) positions in a pacman game.
-
-    Note: this search problem is fully specified; you should NOT change it.
-    """
-
-    def __init__(self, gameState, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
-        """
-        Stores the start and goal.
-
-        gameState: A GameState object (pacman.py)
-        costFn: A function from a search state (tuple) to a non-negative number
-        goal: A position in the gameState
-        """
-        self.gameState = gameState
+        self.gameState = gameState # add gameState for UCS new cost function.
         self.walls = gameState.getWalls()
         self.startState = gameState.getPacmanPosition()
         if start != None: self.startState = start
@@ -360,12 +227,52 @@ class UCSPositionSearchProblem(search.SearchProblem):
             cost += self.costFn((x,y))
         return cost
 
+class StayEastSearchAgent(SearchAgent):
+    """
+    An agent for position search with a cost function that penalizes being in
+    positions on the West side of the board.
+
+    The cost function for stepping into a position (x,y) is 1/2^x.
+    """
+    def __init__(self):
+        self.searchFunction = search.uniformCostSearch
+        costFn = lambda pos: .5 ** pos[0]
+        self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
+
+class StayWestSearchAgent(SearchAgent):
+    """
+    An agent for position search with a cost function that penalizes being in
+    positions on the East side of the board.
+
+    The cost function for stepping into a position (x,y) is 2^x.
+    """
+    def __init__(self):
+        self.searchFunction = search.uniformCostSearch
+        costFn = lambda pos: 2 ** pos[0]
+        self.searchType = lambda state: PositionSearchProblem(state, costFn)
+
+def manhattanHeuristic(position, problem, info={}):
+    "The Manhattan distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = problem.goal
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
+def euclideanHeuristic(position, problem, info={}):
+    "The Euclidean distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = problem.goal
+    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
+#####################################################
+# This portion is incomplete.  Time to write code!  #
+#####################################################
+
 class NewUCSCostSearchAgent(SearchAgent):
     """Create a new cost function for UCS algorithm"""
     def __init__(self):
         self.searchFunction = search.uniformCostSearchNewCostFunc
         costFn = lambda pos: 1
-        self.searchType = lambda state: UCSPositionSearchProblem(state, costFn, (1, 1))    
+        self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1))    
 
 
 
@@ -460,18 +367,6 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-    def reachedAll(self):
-        #return self.reachTopRight and self.reachTopLeft and self.reachBotRight and self.reachBotLeft
-        pass
-
-    def checkCorner(self, position):
-        """
-        Check whether the position is a corner.
-        Args:
-          (tuple of int) position: the xy coordinates of a position.
-        """
-        pass    
-
 
 def cornersHeuristic(state, problem):
     """
@@ -502,34 +397,21 @@ def cornersHeuristic(state, problem):
     yCoordinates = []
     xCoordinates = []
 
+    # Add unvisited corners' x and y coordinates
     for corner in unvisitedCorner:
         xCoordinates.append(corner[0])
         yCoordinates.append(corner[1])
 
+    # Add current position's coordinates
     xCoordinates.append(position[0])
     yCoordinates.append(position[1])
 
-    # Calculate cost 
+    # Calculate cost.
     heuValue = 0
-
     heuValue += max(xCoordinates) - min(xCoordinates)
     heuValue += max(yCoordinates) - min(yCoordinates)
 
-    
-    # totDist = 0
-    # if len(unvisitedCorner) > 0:
-    #     nearestDist = util.manhattanDistance(position, unvisitedCorner[0])
-    #     for corner in unvisitedCorner:
-    #         dist = util.manhattanDistance(position, corner)
-    #         totDist += dist
-    #         if dist < nearestDist:
-    #             nearestDist = dist
-    #     heuValue += dist
-
-    # heuValue = totDist
     return heuValue
-
-
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -625,9 +507,11 @@ def foodHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     foodList = foodGrid.asList()
 
+
+    # This food heuristic use the farest maze distance of food as the cost of current position.
     farestDist = 0
     if len(foodList) > 0:
-        farestDist = util.manhattanDistance(position, foodList[0])
+        farestDist = mazeDistance(position, foodList[0], problem.startingGameState)
         for food in foodList[1:]:
             # Calculate the maze distance
             # Fist check whether the data is stored in the problem.heuristicInfo.
@@ -641,10 +525,7 @@ def foodHeuristic(state, problem):
             # Update the farest maze distance
             if mazeDist > farestDist:
                 farestDist = mazeDist
-
     return farestDist
-
-
 
 
 class ClosestDotSearchAgent(SearchAgent):

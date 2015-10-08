@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1444060909 "HW2_Li-Yi Lin.tex" "HW2_Li-Yi Lin.pdf" "HW2_Li-Yi Lin" 1444060910
+["pdflatex"] 1444261722 "HW2_Li-Yi Lin.tex" "HW2_Li-Yi Lin.pdf" "HW2_Li-Yi Lin" 1444262202
   "/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2015/texmf-dist/tex/generic/ifxetex/ifxetex.sty" 1284331290 1458 43ab4710dc82f3edeabecd0d099626b2 ""
   "/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/gettitlestring.sty" 1303254447 8237 52810bdb4db2270e717422560a104aea ""
@@ -41,15 +41,15 @@
   "/usr/local/texlive/2015/texmf-dist/tex/latex/tools/enumerate.sty" 1428932888 3467 e23880ed1af32024be116b861a72d6e1 ""
   "/usr/local/texlive/2015/texmf-dist/tex/latex/url/url.sty" 1388531844 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/usr/local/texlive/2015/texmf-dist/tex/latex/wrapfig/wrapfig.sty" 1137111090 26220 3701aebf80ccdef248c0c20dd062fea9 ""
-  "HW2_Li-Yi Lin.aux" 1444060910 662 b2b94621371df8d9296b8bf5bec1b851 ""
-  "HW2_Li-Yi Lin.out" 1444060910 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "HW2_Li-Yi Lin.tex" 1444060895 16776 d0fc4cdd9e8237bbe9d2730e5c9779c7 ""
+  "HW2_Li-Yi Lin.aux" 1444261722 662 b2b94621371df8d9296b8bf5bec1b851 ""
+  "HW2_Li-Yi Lin.out" 1444261722 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "HW2_Li-Yi Lin.tex" 1444261740 17150 199e05201c655a9f907736b71055cef5 ""
   "pic/corner1.png" 1443972928 74147 a11f90cdb7637b667143c78deb46eac2 ""
   "pic/corner2.png" 1443972938 63794 51eaf9db406b4550e658a99bbed128c6 ""
   "pic/corner3.png" 1443973025 69064 ac4941f681bf2a3d724b3155ff770fdf ""
   "pic/corner4.png" 1443973013 65135 42c61d63d8ce699c7390b6723179382d ""
   (generated)
+  "HW2_Li-Yi Lin.log"
+  "HW2_Li-Yi Lin.out"
   "HW2_Li-Yi Lin.aux"
   "HW2_Li-Yi Lin.pdf"
-  "HW2_Li-Yi Lin.out"
-  "HW2_Li-Yi Lin.log"

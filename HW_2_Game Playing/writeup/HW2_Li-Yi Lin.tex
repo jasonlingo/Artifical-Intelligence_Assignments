@@ -71,7 +71,7 @@ The Depth First Search (DFS) will keep searching the path to the destination by 
 $[$SearchAgent$]$ using function depthFirstSearch\\
 $[$SearchAgent$]$ using problem type PositionSearchProblem\\
 Path found with total cost of 10 in 0.0 seconds\\
-Search nodes expanded: 14\\
+Search nodes expanded: 15\\
 Pacman emerges victorious! Score: 500\\
 Average Score: 500.0\\
 Scores:        500.0\\
@@ -83,7 +83,7 @@ Record:        Win\\
 $[$SearchAgent$]$: using function depthFirstSearch\\
 $[$SearchAgent$]$: using problem type PositionSearchProblem\\
 Path found with total cost of 130 in 0.0 seconds\\
-Search nodes expanded: 144\\
+Search nodes expanded: 146\\
 Pacman emerges victorious! Score: 380\\
 Average Score: 380.0\\
 Scores:        380.0\\
@@ -147,15 +147,15 @@ Record:        Win\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \noindent
-\textbf{Grad Stucent-Iterative Eeepening Search:}\\
+\textbf{Grad Stucent-Iterative Deepening Search:}\\
 \textbf{tinyMaze:}\\
 $[$SearchAgent$]$ using function ids\\
 $[$SearchAgent$]$ using problem type PositionSearchProblem\\
-Path found with total cost of 10 in 0.0 seconds\\
-Search nodes expanded: 86\\
-Pacman emerges victorious! Score: 500\\
-Average Score: 500.0\\
-Scores:        500.0\\
+Path found with total cost of 8 in 0.0 seconds\\
+Search nodes expanded: 64\\
+Pacman emerges victorious! Score: 502\\
+Average Score: 502.0\\
+Scores:        502.0\\
 Win Rate:      1/1 (1.00)\\
 Record:        Win\\
 
@@ -163,11 +163,11 @@ Record:        Win\\
 \textbf{mediumMaze:}\\
 $[$SearchAgent$]$ using function ids\\
 $[$SearchAgent$]$ using problem type PositionSearchProblem\\
-Path found with total cost of 68 in 0.2 seconds\\
-Search nodes expanded: 8138\\
-Pacman emerges victorious! Score: 442\\
-Average Score: 442.0\\
-Scores:        442.0\\
+Path found with total cost of 70 in 0.2 seconds\\
+Search nodes expanded: 8580\\
+Pacman emerges victorious! Score: 440\\
+Average Score: 440.0\\
+Scores:        440.0\\
 Win Rate:      1/1 (1.00)\\
 Record:        Win\\
 
@@ -175,7 +175,7 @@ Record:        Win\\
 \textbf{bigMaze:}\\
 $[$SearchAgent$]$ using function ids\\
 $[$SearchAgent$]$ using problem type PositionSearchProblem\\
-Path found with total cost of 210 in 1.4 seconds\\
+Path found with total cost of 210 in 1.7 seconds\\
 Search nodes expanded: 60211\\
 Pacman emerges victorious! Score: 300\\
 Average Score: 300.0\\
@@ -190,7 +190,7 @@ Record:        Win\\
 \textbf{mediumMaze:}\\
 $[$SearchAgent$]$ using function ucs\\
 $[$SearchAgent$]$ using problem type PositionSearchProblem\\
-Path found with total cost of 68 in 0.1 seconds\\
+Path found with total cost of 68 in 0.0 seconds\\
 Search nodes expanded: 269\\
 Pacman emerges victorious! Score: 442\\
 Average Score: 442.0\\
@@ -234,8 +234,12 @@ $$\text{ghostCost += (eastNearest + 1.0) / (westNearest + 1.0)}$$
 The intuition for these equation is from the "StayEastSearchAgent" and "StayWestSearchAgent". For example, when a nearest ghost is at the north side, then "northNearest" must be larger than "southNearest". So when next step is going north, the cost will increase. Hence, it will encourage the pacman to go south.\\
 
 \noindent
-If the cost function only considers the food, then the pacman will encounter the ghost very easily. So the problem is divided into several subproblems. Some part of the searching process is escaping the ghost, and when the ghost is far away, the searching process will switch to finding foods. Although this cost function might make the pacman to walk more steps, it can make the pacman safer since the pacman can have the ghost-escaping ability. This assigment only calculate the cost and find the path before the game starts. If it can recalculate the cost each time when the ghosts move, that might be more interesting.\\
+If the cost function only considers the food, then the pacman will encounter the ghost very easily. So the problem is divided into several subproblems. Some part of the searching process is escaping the ghost, and when the ghost is far away, the searching process will switch to finding foods. Although this cost function might make the pacman to walk more steps, it can make the pacman safer since the pacman can have the ghost-escaping ability. This assigment only calculate the cost and find the path before the game starts. If it can recalculate the cost each time when the ghosts move, then we might be able to see the interaction of the pacman with the environemtn.\\
 
+\noindent
+For the detailed result of this question, please see the content in the next page.
+
+\newpage
 \noindent
 \textbf{mediumMaze:}\\
 Path found with total cost of 68 in 0.0 seconds\\
@@ -259,7 +263,7 @@ Record:        Win\\
 \noindent
 \textbf{mediumScaryMaze:}\\
 Path found with total cost of 92 in 0.0 seconds\\
-Search nodes expanded: 222\\
+Search nodes expanded: 226\\
 Pacman emerges victorious! Score: 418\\
 Average Score: 418.0\\
 Scores:        418.0\\
@@ -325,7 +329,7 @@ Record:        Win\\
 \textbf{mediumCorners:}\\
 $[$SearchAgent$]$ using function bfs\\
 $[$SearchAgent$]$ using problem type CornersProblem\\
-Path found with total cost of 106 in 0.2 seconds\\
+Path found with total cost of 106 in 0.3 seconds\\
 Search nodes expanded: 1966\\
 Pacman emerges victorious! Score: 434\\
 Average Score: 434.0\\
@@ -391,7 +395,7 @@ Record:        Win\\
 \textbf{trickySearch}\\
 $[$SearchAgent$]$ using function astar and heuristic nullHeuristic\\
 $[$SearchAgent$]$ using problem type FoodSearchProblem\\
-Path found with total cost of 60 in 75.8 seconds\\
+Path found with total cost of 60 in 68.8 seconds\\
 Search nodes expanded: 16688\\
 Pacman emerges victorious! Score: 570\\
 Average Score: 570.0\\
@@ -403,7 +407,7 @@ Record:        Win\\
 \newpage
 \noindent
 \textbf{Grad Student-Solves the eating all the dots problem with A* with a foodHeuristic:}\\
-For this food problem, I implemented a heuristic that finds the farest distance from the current position to the farest food. For the distance calculation, I used mazeDistance function to find the actual distance between any two nodes. The heuristic needs 10 and 4239 search nodes expanded for the tinySearch and trickySearch mazes respectively (for more detail, please see the results shown below). I designed this heuristic because I thought that the heuristic cost function should consider the farest distance to a food. When a pacman reach a nearest food, it also need to go to the farest food eventually and that farest distance usually affects the final total step more than the nearest one does.\\
+For this food problem, I implemented a heuristic that finds the farest distance from the current position to the farest food. For the distance calculation, I used mazeDistance function to find the actual distance between any two nodes. The mazeDistance uses breadth first search, which is very time comsuming if we need to find many maze distances. To save the computation time, I also adpoted dynamic programming skill, using the "problem.heuristicInfo". The heuristic needs 10 and 4239 search nodes expanded for the tinySearch and trickySearch mazes respectively (for more detail, please see the results shown below). I designed this heuristic because I thought that the heuristic cost function should consider the farest distance to a food. When a pacman reach a nearest food, it still needs to go to the farest food eventually and that farest distance usually affects the final total steps more than the nearest one does.\\
 
 \noindent
 This algorithm is consistent since when the pacman walks one step, the heuristic cost will change at most one and the cost for one step is still one, thus making $h(n) \leq c(n, a, n') + h(n')$ hold true.\\
@@ -420,7 +424,7 @@ Record:        Win\\
 
 \noindent
 \textbf{trickySearch:}\\
-Path found with total cost of 60 in 4.3 seconds\\
+Path found with total cost of 60 in 7.4 seconds\\
 Search nodes expanded: 4239\\
 Pacman emerges victorious! Score: 570\\
 Average Score: 570.0\\

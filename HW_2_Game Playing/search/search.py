@@ -92,21 +92,26 @@ def depthFirstSearch(problem):
     fringe = util.Stack()
     # visited state
     visited = []
-    # Initial action
 
+    # Push the first node into the stack
     curState = problem.getStartState()
-    visited.append(curState)
     fringe.push((curState, [], 0))
 
+    # Find the goal state until the fringe is empty or the gold is found
     while not fringe.isEmpty():
         curState, actions, totalCost = fringe.pop()
         if problem.isGoalState(curState):
+            # Found the goal state, return the actions from the starting position 
+            # to the goal position
             return actions
-        successors = problem.getSuccessors(curState)
-        for nextState, action, cost in successors:
-            if nextState not in visited:
-                visited.append(nextState)
-                fringe.push((nextState, actions + [action], totalCost + cost))
+
+        if curState not in visited:
+            visited.append(curState)
+            successors = problem.getSuccessors(curState)
+            for nextState, action, cost in successors:
+                if nextState not in visited:
+                    # Push the unvisited successor into the stack for future search
+                    fringe.push((nextState, actions + [action], totalCost + cost))
 
     print "Error: Cannot find a path using DSF!!"
     return []
@@ -118,21 +123,25 @@ def breadthFirstSearch(problem):
     fringe = util.Queue()
     # visited state
     visited = []
-    # Initial action
 
-    curState = problem.getStartState()
-    visited.append(curState)
-    fringe.push((curState, [], 0))
+    # Push the first node into the queue
+    fringe.push((problem.getStartState(), [], 0))
 
+    # Find the goal state until the fringe is empty or the gold is found
     while not fringe.isEmpty():
         curState, actions, totalCost = fringe.pop()
         if problem.isGoalState(curState):
+            # Found the goal state, return the actions from the starting position 
+            # to the goal position            
             return actions
-        successors = problem.getSuccessors(curState)
-        for nextState, action, cost in successors:
-            if nextState not in visited:
-                visited.append(nextState)
-                fringe.push((nextState, actions + [action], totalCost + cost))
+
+        if curState not in visited:
+            visited.append(curState)
+            successors = problem.getSuccessors(curState)
+            for nextState, action, cost in successors:
+                if nextState not in visited:
+                    # Push the unvisited successor into the queue for future search
+                    fringe.push((nextState, actions + [action], totalCost + cost))
 
     print "Error: Cannot find a path using BSF!!"
     return []
@@ -163,50 +172,53 @@ def DepthLimitedSearch(problem, limit):
     fringe = util.Stack()
     # visited state
     visited = []
-    # Initial action
 
-    curState = problem.getStartState()
     # Push the first not into the stack
-    visited.append(curState)
-    fringe.push((curState, [], 0))
+    fringe.push((problem.getStartState(), [], 0))
 
+    # Find the goal state until the fringe is empty or the gold is found
     while not fringe.isEmpty():
         curState, actions, height = fringe.pop()
         if problem.isGoalState(curState):
+            # Found the goal state, return the actions from the starting position 
+            # to the goal position            
             return actions
-        if height < limit:      
+
+        if height < limit and curState not in visited:      
+            visited.append(curState)
             successors = problem.getSuccessors(curState)
             for nextState, action, _ in successors:
                 if nextState not in visited:
-                    visited.append(nextState)
+                    # Push the unvisited successor into the stack for future search
                     fringe.push((nextState, actions + [action], height + 1))
     return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    # Search actions
     fringe = util.PriorityQueue()
     # visited state
-    visited = {}
+    visited = []
 
-    curState = problem.getStartState()
-    # Need to record cost for updating path with lowest actions.
-    visited[str(curState)] = 0
-    fringe.push((curState, [], 0), 0)
+    # Push the first node into the priority queue
+    fringe.push((problem.getStartState(), [], 0), 0)
 
+    # Find the goal state until the fringe is empty or the gold is found
     while not fringe.isEmpty():
         curState, actions, totalCost = fringe.pop()
         if problem.isGoalState(curState):
+            # Found the goal state, return the actions from the starting position 
+            # to the goal position            
             return actions
     
-        successors = problem.getSuccessors(curState)
-        for nextState, action, cost in successors:
-            # Get the cost if we reach the successor by the current actions.
-            newCost = problem.getCostOfActions(actions + [action])
-            if str(nextState) not in visited or visited[str(nextState)] > newCost:
-                visited[str(nextState)] = newCost
-                fringe.push((nextState, actions + [action], newCost), newCost)
+        if curState not in visited:
+            visited.append(curState)
+            successors = problem.getSuccessors(curState)
+            for nextState, action, cost in successors:
+                if nextState not in visited:
+                    # Push the unvisited successor into the priority queue for future search
+                    newCost = problem.getCostOfActions(actions + [action])
+                    fringe.push((nextState, actions + [action], newCost), newCost)
 
     print "Error: Cannot find a path using uniformCostSearch!!"
     return []
@@ -217,12 +229,12 @@ def uniformCostSearchNewCostFunc(problem):
     # Search actions
     fringe = util.PriorityQueue()
     # visited state
-    visited = {}
+    #visited = {}
+    visited = []
 
-    curState = problem.getStartState()
-    # Need to record cost for updating path with lowest actions.
-    visited[str(curState)] = 0
-    fringe.push((curState, [], 0), 0)
+    # Push the first node into the priority queue
+    fringe.push((problem.getStartState(), [], 0), 0)
+
     # The position of ghost and food
     ghost = problem.gameState.getGhostPositions()
     food = problem.gameState.getFood().asList() 
@@ -236,31 +248,34 @@ def uniformCostSearchNewCostFunc(problem):
             maxX = wall[0]
         if wall[1] > maxY:
             maxY = wall[1]
-    
-    consistency ={}
+     
+    # Find the goal state until the fringe is empty or the gold is found
     while not fringe.isEmpty():
         curState, actions, totalCost = fringe.pop()
         if problem.isGoalState(curState):
-            for x in sorted(consistency, reverse=True):
-                print x, consistency[x]
+            # Found the goal state, return the actions from the starting position 
+            # to the goal position            
             return actions
 
-        successors = problem.getSuccessors(curState)
-        for nextState, action, _ in successors:
-            cost = newCostFunc(nextState, food, ghost, maxX, maxY, consistency)
-            # Get the cost if we reach the successor by the current actions.
-            newCost = totalCost + cost + 1 # 1 is for going to its successor
-
-            if str(nextState) not in visited or visited[str(nextState)] > newCost:
-                visited[str(nextState)] = newCost
-                fringe.push((nextState, actions + [action], newCost), newCost)
+        if curState not in visited:
+            visited.append(curState)
+            successors = problem.getSuccessors(curState)
+            for nextState, action, _ in successors:
+                cost = newCostFunc(nextState, food, ghost, maxX, maxY)
+                # Get the cost if we reach the successor by the current actions.
+                newCost = totalCost + cost + 1 # 1 is the cost for going to its successor
+                if nextState not in visited:
+                    # Push the unvisited successor into the priority queue for future search
+                    fringe.push((nextState, actions + [action], newCost), newCost)
 
     print "Error: Cannot find a path using uniformCostSearch!!"
     return []    
 
-def newCostFunc(pos, food, ghost, maxX, maxY, consistency):
+def newCostFunc(pos, food, ghost, maxX, maxY):
     """
-    New cost function for UCS algorithm.
+    New cost function for UCS algorithm. This cost function has two mode:
+    "eat" and "escape." When the ghost is more closer than the food, the 
+    cost function will tell the pacman to escape first.
 
     Args:
       (tuple(int)) pos: the xy-coordinates of the pacman.
@@ -311,8 +326,6 @@ def newCostFunc(pos, food, ghost, maxX, maxY, consistency):
     # Decide the final cost by the nearest distance of ghost and food.
     # If a food is closer than all other ghosts, then return the food cost, else return the ghost cost.       
     finalCost = ghostCost if nearestGhostDist <= foodCost else foodCost
-    if nearestGhostDist <= foodCost:
-        consistency[pos] = ghostCost
 
     return finalCost
 
@@ -336,9 +349,12 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     visited.append((curState, 0))
     fringe.push((curState, [], 0), 0)
 
+    # Find the goal state until the fringe is empty or the gold is found
     while not fringe.isEmpty():
         curState, actions, totalCost = fringe.pop()
         if problem.isGoalState(curState):
+            # Found the goal state, return the actions from the starting position 
+            # to the goal position            
             return actions
 
         successors = problem.getSuccessors(curState)
@@ -352,7 +368,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if tempState == nextState and tempCost <= newCost:
                     visitedState = True
                     break
-            # Update actions
+            # Update actions if the state is not visited or the cost is better
             if not visitedState:    
                 costToGoal = heuristic(nextState, problem)
                 visited.append((nextState, newCost))
