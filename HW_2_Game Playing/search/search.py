@@ -187,6 +187,7 @@ def DepthLimitedSearch(problem, limit):
         if height < limit and curState not in visited:      
             visited.append(curState)
             successors = problem.getSuccessors(curState)
+            #successors.reverse()
             for nextState, action, _ in successors:
                 if nextState not in visited:
                     # Push the unvisited successor into the stack for future search
