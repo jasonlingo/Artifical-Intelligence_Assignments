@@ -1,0 +1,380 @@
+\documentclass[12pt]{article} 
+\usepackage{latexsym}
+
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+
+\usepackage{amsfonts,eucal,amsbsy,amsthm,amsopn,amssymb}
+\usepackage{bm}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\usepackage{color}
+\newcommand{\todo}[1] {\textcolor{red}{\em #1}}
+
+
+% no paragraph skips in bibliography:
+ \let\oldthebibliography=\thebibliography
+  \let\endoldthebibliography=\endthebibliography
+  \renewenvironment{thebibliography}[1]{%
+    \begin{oldthebibliography}{#1}%
+      \setlength{\parskip}{0.4ex}%
+      \setlength{\itemsep}{0ex}%
+  }%
+  {%
+    \end{oldthebibliography}%
+}
+
+%\renewcommand{\baselinestretch}{1.2}
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin 0mm
+\textheight 220mm
+\textwidth 160mm
+\parskip 1mm plus2mm minus1mm
+
+\newenvironment{enumeratesquish}{\begin{list}{\addtocounter{enumi}{1} \arabic{enumi}. }{\setlength{\itemsep}{-0.5em}\setlength{\leftmargin}{1em}\addtolength{\leftmargin}{\labelsep}}}{\end{list}}
+\newenvironment{itemizesquish}{\begin{list}{\labelitemi}{\setlength{\itemsep}{0em}\setlength{\labelwidth}{0.5em}\setlength{\leftmargin}{\labelwidth}\addtolength{\leftmargin}{\labelsep}}}{\end{list}}
+
+\setlength{\abovecaptionskip}{0em}
+\setlength{\belowcaptionskip}{-1.5em}
+
+\title{\vspace{-2cm} \bf Homework Assignment 3}
+\author{600.335/435 Artificial Intelligence\\ 
+Fall 2015\\ 
+Due: November 10th\\ 
+Li-Yi Lin / llin34@jhu.edu}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Logic and Knowledge Representation}
+
+Lately we have been focusing on methods for representing knowledge such that an intelligent agent can follow rules and make inferences. In this assignment, you will be using propositional logic, first order logic, and knowledge representation to solve written questions. \textbf{Please be sure to show all relevant work.}
+
+\begin{enumerate}
+
+\subsection*{Translate the following english sentences into \emph{propositional logic}}
+
+\item{A and B are both true.}\\
+\textbf{Ans:} A $\wedge$ B
+
+\item{If A is true, then B must be true as well.}\\
+\textbf{Ans:} A $\Rightarrow$ B
+
+\item{If a student studies for a test, they will do well on it. We can also tell that if a student did well on a test, then they must have studied for it.}\\
+\textbf{Ans:}\\
+A: the student studies for a test.\\
+B: the student did well on a test.\\
+The original statement can be represented as: A $\iff$ B
+
+\item{If a student is completely dry and it is raining outside, it is because they have an umbrella or a hoodie and it is not raining heavily.}\\
+\textbf{Ans:}\\
+D: a student is complete dry.\\
+R: it is raining outside.\\
+U: the student has an umbrella\\
+H: the student has an hoodie\\
+S: it is not raining heavily\\
+The original statement can be represented as: ((U $\vee$ H) $\wedge$ S) $\Rightarrow$ (D $\wedge$ R)
+
+\item{If a student doesn't hand in the homework late or incomplete, this doesn't necessarily imply that they will not lose points.}\\
+\textbf{Ans:}\\
+L: a student hands in the homework late.\\
+I: a student hands in the homework incomplete.\\
+P: a student loses point.\\
+The original statement can be represented as: $\neg$($\neg$(L $\vee$ I) $\Rightarrow$ $\neg$P)\\
+It can be further written as:\\
+$\neg$($\neg\neg$(L $\vee$ I) $\vee$ $\neg$ P) $\equiv$ $\neg$((L $\vee$ I) $\vee$ $\neg$ P) $\equiv$ $\neg$ (L $\vee$ I) $\wedge$ P $\equiv$ $\neg$ L $\wedge$ $\neg$ I $\wedge$ P
+
+
+\subsection*{Simplify and translate the following \emph{propositional logic} sentence into English}
+
+\item{\(A \lor (A \land B) \iff \lnot(A \land B \land C)\)}\\
+\textbf{Ans:}\\
+The original propositional logic can be simplified as: A $\iff$ $\lnot$(A $\land$ B $\land$ C)\\
+It can be further simplified as:\\
+\( (A \implies \lnot(A \land B \land C)) \land (\lnot(A \land B \land C) \implies A)   \)\\
+\(\equiv (\lnot A \lor \lnot(A \land B \land C)) \land ((A \land B \land C) \lor A)    \)\\
+\(\equiv (\lnot A \lor (\lnot A \lor \lnot B \lor \lnot C) \land A                     \)\\
+\(\equiv (\lnot A \land A) \lor ((\lnot A \lor \lnot B \lor \lnot C) \land A)          \)\\
+\(\equiv  ((\lnot A \lor \lnot B \lor \lnot C) \land A) \)\\
+\(\equiv (\lnot B \lor \lnot C) \land A\)\\
+This can be said that it is true when A is true and at least one of B or C is not true.\\
+
+
+\subsection*{Is the following sentence valid?}
+
+\item{\(A \lor B\)}\\
+\textbf{Ans:}\\
+The sentence is not true in the model that A and B are both false. Therefore, it is not a valid sentence.
+
+\subsection*{Is the following sentence satisfiable?}
+
+\item{\(A \implies B\)}\\
+\textbf{Ans:}\\
+The sentence is satisfiable in the following models:\\ 
+1. A is false\\
+2. A and B are both true. 
+
+\subsection*{Is the following sentence unsatisfiable?}
+
+\item{\((A \land (B \lor C)) \land ((A \land B) \lor (A \land C))\)}\\
+\textbf{Ans:}\\
+The sentence can be simplified as: \(A \land (B \lor C)\)\\
+It is satisfiable in the model that A is true and at least one of B or C is true. Thus, the sentence is not unsatisfiable.
+
+\subsection*{Translate the following english sentences into \emph{first order logic}}
+
+\item{Some students pass English but not Math.}??\\
+\textbf{Ans:} \(\exists x \) student($x$) \(\land \) pass($x$, English) \(\land \lnot\) pass($x$, Math)
+
+\item{Every student is registered in a class and enrolled at a university.}\\
+\textbf{Ans:} \(\forall x\) student($x$) \(\implies\) registered($x$, class) $\land$ enrolled($x$, university)
+
+\item{If someone is an aunt or uncle, then someone must be their niece or nephew.}\\
+\textbf{Ans:} $\forall x$ aunt($x$) $\lor$ uncle($x$) $\implies \exists y $ niece($x, y$) $\lor$ nephew($x, y$)
+
+\item{The old that is strong does not wither.}??\\
+\textbf{Ans:} $\forall x$ old($x$) $\land$ strong($x$) $\implies \lnot$ wither($x$) 
+
+\subsection*{Translate the following \emph{first order logic} sentence into English}
+
+\item{\(\lnot ( \forall x, Gold(x) \implies Glitter(x))\)}\\
+\textbf{Ans:}\\
+The original first order logic sentence equals to: $\exists x$ Gold($x$) $\land \lnot$ Glitter($x$)\\
+It can be said there exist some golds that do not glitter.
+
+\vspace*{3\baselineskip}
+%% 15
+\item{Given the Wumpus World game discussed in class, please encode all KB rules for finding the wumpus in first order logic given two known spaces that have a stench present. Hint: I am not explicitly saying the relationship between these two spaces, so think about different cases that are possible within the game's logic.}\\
+\textbf{Ans:}\\
+Perception:\\
+\(\forall t, b, g, u, s\) \(Percept([Stench, b, g, u, s], t) \implies Smelly(t)\)\\
+\(\forall t, s, g, u, s\) \(Percept([s, Breeze, g, u, s], t) \implies Breezy(t)\)\\
+\(\forall t, s, b, u, s\) \(Percept([s, b, Glitter, u, s], t) \implies
+AtGold(t)\)\\
+\(\forall t, s, b, W, s\) \(Percept([s, b, g, Bump, s], t) \implies Bump(t)\)\\
+\(\forall t, s, b, g, u\) \(Percept([s, b, g, u, Scream], t) \implies WumpusKilled(t)\)\\
+
+Reflex:\\
+\(\forall t\) \(AtGold(t) \implies Action(Grab, t)\)
+
+Reflex with internal state:\\
+\(\forall t\) \(AtGold(t) \land \lnot Holding(Gold, t) \implies Action(Grab, t)\)
+
+Actions:\\
+$Turn(Right), Turn(Left), Forward, Shoot, Grab, Climb$
+
+Properties of locations:\\
+\(\forall x, t\) \(At(Agent, x, t) \land Smelly(t) \implies Stench(x)\)\\
+\(\forall x, t\) \(At(Agent, x, t) \land Breezy(t) \implies Breeze(x)\)\\
+\(\forall x, t\) \(At(Agent, x, t) \land AtGold(t) \implies Glitter(x)\)\\
+\(\forall x, t\) \(At(Agent, x, t) \land Bump(t) \implies Wall(x)\)\\
+
+\(\forall y\) \(Breeze(y) \implies \exists x\) \(Pit(x) \land Adjacent(x, y)\)\\
+\(\forall y\) \(Stench(y) \implies \exists x\) \(Wumpus(x) \land Adjacent(x, y)\)\\
+
+\(\forall x, y, a, b\) \(Adjacent([x, y], [a, b]) \iff (x = a \land (y=b-1 \lor y = b+1)) \lor (y=b \land (x=a-1 \lor x=a+1))\)
+
+\(\forall t\) \(HaveArrow(t+1) \iff (HaveArrow(t) \land \not Action(Shoot, t)\)
+
+
+
+
+\item{Suppose you are given the following axioms: \\
+1. \(0 \leq 3\) \\
+2. \(7 \leq 9\) \\
+3. \(\forall x, x \leq x\) \\
+4. \(\forall x, x \leq x + 0\) \\
+5. \(\forall x, x + 0 \leq x\) \\
+6. \(\forall x,y, x + y \leq y + x\) \\
+7. \(\forall w,x,y,z, w \leq y \land x \leq z \implies w + x \leq y + z\) \\
+8. \(\forall x,y,z, x \leq y \land y \leq z \implies x \leq z \)
+\subitem{A. Give a backward-chaining proof of the sentence \(7 \leq 3 + 9\). (Be sure, of course, to use only the axioms given here, not anything else you may know about arithmetic.) Show only the steps that lead to success, not the irrelevant steps.}\\
+\textbf{Ans:}\\
+The current goal is to prove \(7 \leq 3 + 9\) is true.\\
+By the axiom 8, the current goal can be inferred by \(7 \leq 0 + 7 \land 0 + 7 \leq 3 + 9 \implies 7 \leq 3 + 9\).\\
+So we have to prove \(7 \leq 0 + 7\) and \(0 + 7 \leq 3 + 9\) are both true.\\
+We first prove that  \(0 + 7 \leq 3 + 9\). By the axiom No.7, it can be inferred by \(0 \leq 3 \land 7 \leq 9 \implies 0 + 7 \leq 3 + 9\). Since by axioms No.1 and No.2, \(0 \leq 3\) and \(7 \leq 9\) are already true, we have proved that \(0 + 7 \leq 3 + 9\) is true.\\
+Then we are going to prove that \(7 \leq 0 + 7\) is true. It can be inferred by \(7 \leq 7 + 0 \land 7 + 0 \leq 0 + 7 \implies 7 \leq 0 + 7\). By axiom No.4 and No.6, \(7 \leq 7 + 0 \) and \(7 + 0 \leq 0 + 7\) are both true. Thus, \(7 \leq 0 + 7\) is true. We have proved that \(7 \leq 0 + 7\) and \(0 + 7 \leq 3 + 9\) are both true. Therefore, \(7 \leq 3 + 9\) is true.
+
+%%%%%%%%%%%%%%%
+\subitem{B. Give a forward-chaining proof of the sentence \(7 \leq 3 + 9\). Again, show only the steps that lead to success.}}\\
+\textbf{Ans:}\\
+We have the axioms: \(0 \leq 3\) and \(7 \leq 9\)\\
+By applying the axiom No.7, we have: \(0 \leq 3 \land 7 \leq 9 \implies 0 + 7 \leq 3 + 9\)\\
+By applying the axiom No.6, we have: \(7 + 0 \leq 0 + 7\)\\
+By applying the axiom No.8, we have: \((7 + 0) \leq (0 + 7) \land (0 + 7) \leq (3 + 9) \implies (7 + 0) \leq (3 + 9)\)\\
+By applying the axiom No.4, we have: \(7 \leq 7 + 0\)\\
+By applying the axiom No.8, we have: \((7 \leq 7 + 0) \land (7 + 0 \leq 3 + 9) \implies 7 \leq 3 + 9\)\\
+Thus, we have proved that \(7 \leq 3 + 9\)  is true.
+%%%%%%%%%%%%%%%
+
+\subsection*{For the next several questions, use the following two sentences in first order logic.}
+Assume that \(x\) and \(y\) range over the set of natural numbers, and that \(\leq\) has the conventional mathematical definition. \\
+(A) \(\exists y \forall x (x \leq y)\) \\
+(B) \(\forall x \exists y (x \leq y)\)
+
+\item{Translate (A) and (B) into English}\\
+\textbf{Ans:}\\
+(A) There exists $y$ such that for all $x$, $x \leq y$ is true.\\
+(B) For all $x$, there exists $y$ such that \(x \leq y\) is true.
+
+\item{Is (A) true?}\\
+\textbf{Ans:} The sentence is true when $y$ is the biggest natural number.
+
+\item{Is (B) true?}\\ 
+\textbf{Ans:} The sentence is true because, for all number $x$, we can always find a number $y$ that is greater than or equal to $x$. The simplest example is that $y = x$.
+
+\item{Does (A) entail (B)?}\\
+\textbf{Ans:} Yes, (A) entails (B) because in the worlds that (A) is true, namely, when $y$ is the biggest natural number, (B) must also be true. For all $x$, there exists a biggest natural number, $y$, such that $x \leq y$.
+
+\item{Does (B) entail (A)?}\\
+\textbf{Ans:}\\ No, (B) does not entail (A) because, in the worlds that (B) is true, $y$ can be different for each $x$, but for (A), $y$ must be the one that is larger than or eauql to all the $x$. The logic is different. 
+
+%22
+\item{\textbf{Grad Students Only:} Using resolution, try to prove that (A) follows from (B). You should either complete the proof (if possible), or continue until the proof breaks down and you cannot continue (if impossible). Show the unifying substitution in each step. If the proof fails, explain where, how, and why it fails.}\\
+\textbf{Ans:}\\
+We will prove this by contradiction. We first negate (B):\\
+$(\lnot B)$: $\exists x \forall y (x>y)$\\
+Then, we convert the form of $(A)$ and $(\lnot B)$ using Sklolem:\\
+$(A)$: $x \leq F_1$\\
+$(\lnot B)$: $F_2 > y$\\
+Then we perform substitution: $\{x / F_2, y/F_1\}$, we got ($F_2 \leq F_1$) and ($F_2 > F_1$), which is a contradiction. Therefore, we proved that $(A)$ follows from $(B)$
+
+\item{Define the ExhaustiveDecomposition, Disjoint, and Partition properties of categories using first order logic.}\\
+\textbf{Ans:}\\
+\(ExhaustiveDecomposition(s,c) \iff (\forall i\)  $elementOf(i, c) \iff \exists c_2$  $elementOf(c_2, s) \land elementOf(i, c_2))$\\
+\(Disjoint(s) \iff (\forall c_1, c_2\) $elementOf(c_1, s) \land elementOf(c_2, s) \land \lnot equal(c_1, c_2) \implies isEmptySet(Intersection(c_1, c_2)))$\\
+$Partition(s, c) \iff Disjoint(s) \land ExhaustiveDecomposition(s, c)$
+
+\item{Define an ontology in first order logic for tic-tac-toe. The ontology should contain situations, actions, squares, players, marks (X, O, or blank), and the notion of winning, losing, or drawing a game. Also define the notion of a forced win (or draw): a position from which a player can force a win (or draw) with the right sequence of actions. Write axioms for the domain. (Note: The axioms that enumerate the different squares and that characterize the winning positions are rather long. You need not write these out in full, but indicate clearly what they look like.)}\\
+\textbf{Ans:}\\
+Constant:\\
+$X_p, O_p$:Players\\
+$X, O, Blank$: Marks\\
+$Q_{11}, Q_{12}, Q_{13}, Q_{21}, Q_{22}, Q_{23}, Q_{31}, Q_{32}, Q_{33}$: Squares\\
+
+Predicates:\\
+Player(p)\\
+Mark(m)\\
+Square(q):\\
+
+State:\\
+Marked\\
+Win\\
+
+Situations:\\
+$MarkOf(p)$: is the mark of player p?\\
+$Turn(p)$: is the turn of player p?\\
+$Win(p, s)$: player $p$ wins at state $s$
+
+The action can be represented as:\\
+Play(p, q): player $p$ marks square $q$\\
+
+Axiom:\\
+$A1: MarkOf(X_p) = X$\\
+$A2: MarkOf(O_p) = O$\\
+$A3: \forall p$ $Player(p) \iff p = X_p \lor P = O_p$\\
+$A4: \forall m$ $Mark(m) \iff m = X \lor m = O \lor m = Blank$\\
+$A5: \forall q$ $Square(q) \iff q=Q_{11} \lor q = Q_{12} \lor q=Q_{13} \lor ...\lor q = Q_{33}$\\
+$A6: \forall \text{winning position} (q_1, q_2, q_3):$\\
+$(q_1, q_2, q_3) \iff (q_1 = Q_{11} \land q_2 = Q_{12} \land q_3 = Q_{13})$\\
+$\lor (q_1 = Q_{11} \land q_2 = Q_{22} \land q_3 = Q_{33})$\\
+...\\
+$\lor (q_1 = Q_{31} \land q_2 = Q_{32} \land q_3 = Q_{33})$
+
+
+\item{\textbf{Grad Students Only:} Develop a representational system for reasoning about windows in a window-based computer interface. In particular, your representation should be able to describe: \\
+-The state of a window: minimized, displayed, or nonexistent \\
+-Which window (if any) is the active window \\
+-The position of every window at a given time \\
+-The order (front to back) of overlapping windows \\
+-The actions of creating, destroying, resizing, and moving windows; changing the state of a window; and bringing a window the front. Treat these actions as atomic; that is, do not deal with the issue of relating them to mouse actions. Give axioms describing the effects of actions on fluents. You may use either event or situational calculus. \\
+Assume an ontology containing situations, actions, integers (for x and y coordinates) and windows. Define a language over this ontology; that is, a list of constants, function symbols, and predicates with an English description of each. If you need to add more categories to the ontology (e.g. pixels), you may do so, but be sure to specify these in your write-up. You may (and should) use symbols defined in class or the textbook, but be sure to list these explicitly.}\\
+\textbf{Ans:}\\
+Constant:\\
+$W$: windows\\
+
+Predicates:
+$Displayed(w)$: is the windows $w$ displayed?\\
+$Minimized(w$: is the windows $w$ minimized?\\
+$Exist(w)$: is the windows $w$ exist?\\
+$Active(w)$: is the windows $w$ opened?\\
+
+Functions:\\
+$Position(w, t)$: the position of windows $w$ at time $t$\\
+$Order(w)$: the order of the windows $w$\\
+
+Actions:\\
+$creating, destroying, resizing, moving, bringFront$\\
+
+\item{A popular children's riddle is "Brothers and sisters have I none, but that man's father is my father's son." Using the rules of a family domain (objects are people, predicates are Parent, Sibling, Brother, etc) to show who that man is. You may apply any of the inference methods described in class. Why do you think this riddle is difficult to grasp?}\\
+\textbf{Ans:}\\
+Fact:\\
+(1): \(\lnot (\exists X\) \(Brother(X, me) \lor Sister(X, me))\)\\
+(2): \(\exists S, F\) \(Father(S, \text{that man}) \land Father(F, \text{me}) \land Son(S, F)\)\\
+Proof:\\
+That man's father is my father's son. We know someone with the same father must be brother or sister or himself/herself.\\
+(3) \(\forall A, B, C\) \(Father(A, B) \land Father(A, C) \implies Sister(B, C) \lor Brother(B, C) \lor Self(B, C)\)\\
+Since I don't have brother and sister, if my father has a son, then the son must be me.\\
+(4) \(\forall A, B\) \(Father(A, me) \land Son(B, A) \implies Self(B, me)\)\\
+If that man's father is my father's son, then I must be that man's father.\\
+\(\forall A, B\) \(Father(A, \text{that man}) \land Father(B, me) \land Son(A, B) \implies Father(me, \text{that man})\)\\
+
+This riddle is difficult to grasp because there is no direct relationship between that man and me, and we have to rule out many possibilities to get the right result.
+
+\item{Given the following clauses in first order logic, prove by resolution that \(\lnot istype(Tuna,Mammal)\); that is, prove that a Tuna is not a Mammal. \\
+\(istype(Tuna,Fish)\) \\
+\(\lnot equal(Mammal,Fish)\) \\
+\(istype(p,Type(p))\) \\
+\(\lnot istype(p,k) \lor equal(Type(p),k)\) \\
+\(\lnot equal(x,y) \lor \lnot equal(y,z) \lor equal(x,z)\) \\
+\(\lnot equal(x,y) \lor equal(y,x)\)}\\
+\textbf{Ans:}\\
+We assume \(istype(Tuna,Mammal)\) is true and prove it by resolution refutation.\\
+
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{l|c|r}
+       & \(istype(Tuna,Fish)\)  & (1) (given)\\
+       \hline
+       & \(\lnot equal(Mammal,Fish)\) & (2) (given)\\
+       \hline   
+       & \(istype(Tuna,Mammal)\) & (3) (negate the goal)\\
+       \hline
+       & \(\lnot istype(p,k) \lor equal(Type(p),k)\) & (4) (given)\\
+       \hline
+       & \(\lnot equal(x,y) \lor \lnot equal(y,z) \lor equal(x,z)\) & (5) (given)\\
+       \hline
+       & \(\lnot equal(x,y) \lor equal(y,x)\) & (6) (given)\\
+       \hline
+       by (1), (4) & \(equal(Type(Tuna),Fish)\) & (7)\\
+       \hline
+       by (2), (6) & \(\lnot equal(Fish, Mammal)\) & (8)\\
+       \hline 
+       by (3), (4) & \(equal(Type(Tuna), Mammal)\) & (9)\\
+       \hline
+       by (7), (6) & \(equal(Fish, Type(Tuna))\) & (10)\\
+       \hline
+       by (5), (10) & \(\lnot equal(Type(Tuna), z) \lor equal(Fish, z)\) & (11)\\
+       \hline
+       by (9), (11) & \(equal(Fish, Mammal)\) & (12)\\
+       \hline
+       by (8), (12) & \{\} & (13)\\
+    \end{tabular}
+  \end{center}
+\end{table}
+The result is false. By resolution refutation, we have proved that \(istype(Tuna,Mammal)\) is false. Thus \(\lnot istype(Tuna,Mammal)\) is true.
+
+\end{enumerate}
+
+\subsection*{Submission Requirements}
+You should email Paul (\url{pwilken3@gmail.com}) your answers in pdf or word format. There is no programming portion to this assignment, so a zip file is not necessary. Your answers can be typed or hand-written and scanned, as long as everything is legible. You may \textbf{not} work in pairs for this assignment. Again, please be sure to show all relevant work.
+
+\end{document}
