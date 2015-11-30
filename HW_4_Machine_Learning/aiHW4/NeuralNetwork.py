@@ -9,7 +9,7 @@ class NeuralNetwork(Classifier):
 
     def __init__(self, training_data, nodeNum, weightInitMode=None):
         # number of total training iteration
-        self.ITERATION = 5000
+        self.ITERATION = 10000
 
         # for randomly initializing theta
         self.EPISLON = 0.12
@@ -47,6 +47,7 @@ class NeuralNetwork(Classifier):
 
         # get labels and nodes for the first layer (input layer)
         self.labels, self.x = self.prepareForTraining(training_data)
+        self.a[1] = self.x
 
     def prepareForTraining(self, training_data):
         """
@@ -82,7 +83,7 @@ class NeuralNetwork(Classifier):
         # for iter in range(self.ITERATION):
         while training and iter <= self.ITERATION:
             iter += 1
-            self.feedForward(self.x)
+            self.feedForward()
             cost, costMat = self.cost()
             if cost < 2:
                 training = False
@@ -128,20 +129,20 @@ class NeuralNetwork(Classifier):
                 initW[i] = math.sqrt(6) / math.sqrt(self.nodeNum[i] + self.nodeNum[i+1])
 
         for i in range(1, self.layerNum):  # layer number starts from 1,  add one bias
-            # th = np.random.rand(self.nodeNum[i+1], self.nodeNum[i] + 1) * 2 * initW[i] - initW[i]
+            th = np.random.rand(self.nodeNum[i+1], self.nodeNum[i] + 1) * 2 * initW[i] - initW[i]
 
             # theta[previous layer, next layer]
-            th = np.random.rand(self.nodeNum[i] + 1, self.nodeNum[i]) * 2 * initW[i] - initW[i]
+            # th = np.random.rand(self.nodeNum[i] + 1, self.nodeNum[i]) * 2 * initW[i] - initW[i]
             self.theta[i] = th
 
-    def feedForward(self, x):
+    def feedForward(self):
         """
         Compute all the x in each layer except the first input layer.
         """
         # print "feedforward"
 
         for i in range(1, self.layerNum):
-            self.z[i + 1] = self.a[i].dot(self.theta[i].T)     # z_{i+1} = a_i * theta_i
+            self.z[i + 1] = self.a[i].dot(self.theta[i].T)                # z_{i+1} = a_i * theta_i
             self.a[i + 1] = sigmoid(self.z[i + 1])                        # a_{i+1} = sigmoid(z_{i+1})
 
             # add bias column to each layer except the output layer
@@ -149,7 +150,6 @@ class NeuralNetwork(Classifier):
                 onesCol = np.ones((self.a[i + 1].shape[0], 1))
                 self.a[i + 1] = np.hstack((self.a[i + 1], onesCol))
 
-        return yHat
 
     def backpropagation(self):
         """
