@@ -96,7 +96,7 @@ def load_monks(data_set_number):
     """
 
     if data_set_number not in [1, 2, 3]:
-        print "Invalid argument"
+        print ("Invalid argument")
         return
 
     s = 'data/monks-'+str(data_set_number)+'.train'

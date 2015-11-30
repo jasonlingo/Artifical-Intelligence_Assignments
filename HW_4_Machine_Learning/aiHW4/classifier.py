@@ -53,8 +53,8 @@ class Classifier:
             from DecisionTree import DecisionTree
             attributes = [i for i in range(1, len(training_data[0]))]  # attributes' indices
             attrValue = self.getAttrValue(training_data)
-            print attributes
-            print attrValue
+            # print attributes
+            # print attrValue
             self.clf = DecisionTree(self.params["igMode"], training_data, attributes, None, attrValue)
             self.clf.train()
 
@@ -62,8 +62,14 @@ class Classifier:
             from NeuralNetwork import NeuralNetwork
             featureNum = training_data.shape[1] - 1                    # minus the one for label
             # nodeNum = [featureNum, featureNum * 2, featureNum * 2, 1]  # FIXME: make it become a parameter
-            nodeNum = [featureNum, featureNum * 2, 1]
-            self.clf = NeuralNetwork(training_data, nodeNum)
+            nodeNum = [featureNum, featureNum * 3, 1]
+
+            if "weightInitMode" in self.params:
+                weightInitMode = self.params["weightInitMode"]
+            else:
+                weightInitMode = None
+
+            self.clf = NeuralNetwork(training_data, nodeNum, weightInitMode)
             self.clf.train()
 
         elif self.classifier_type == "naive_bayes":
@@ -105,9 +111,9 @@ class Classifier:
             else:
                 count[self.predict(data)]["incorrect"] += 1
 
-        print count
+        print (count)
 
-        print "total accuracy              = ", sum([count[label]["correct"] for label in count]) / float(len(test_data))
+        print ("total accuracy              = ", sum([count[label]["correct"] for label in count]) / float(len(test_data)))
         # 0: false; 1: true
         # for label in classLabel:  # FIXME
         #     print "precision for class '", label, "' = ", count[label]["correct"] / float(sum([count[label]["correct"]] + [count[label2]["incorrect"] for label2 in classLabel if label2 != label]))

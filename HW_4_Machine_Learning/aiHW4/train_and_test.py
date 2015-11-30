@@ -59,7 +59,7 @@ you want to use. But in this module you will need to
 # dt.train(trainingData)
 # dt.test(testData)
 #
-# print "Congressional Voting Records with Information Gain Ratio"
+# print "Iris with Information Gain Ratio"
 # dt = Classifier("decision_tree", igMode="igr")
 # dt.train(trainingData)
 # dt.test(testData)
@@ -96,11 +96,11 @@ you want to use. But in this module you will need to
  Neural Network
 =====================================================================
 '''
-print "====== Neural Network ========================================"
+print ("====== Neural Network ========================================")
 ''' 1.Congressional Voting Records dataset '''
-print "1. Congressional Voting Records with Information Gain"
+print ("1. Congressional Voting Records with Information Gain")
 (trainingData, testData) = load_data.load_congress_data(0.6)
-dt = Classifier("neural_network")
+dt = Classifier("neural_network", weightInitMode=None)
 dt.train(trainingData)
 dt.test(testData)
 
@@ -110,3 +110,10 @@ dt.test(testData)
 
 
 ''' 3. Iris dataset '''
+# print ""
+# print "3. Iris with Information Gain"
+# (trainingData, testData) = load_data.load_iris(0.6)
+#
+# nn = Classifier("neural_network", weightInitMode="shallow")
+# nn.train(trainingData)
+# nn.test(testData)
