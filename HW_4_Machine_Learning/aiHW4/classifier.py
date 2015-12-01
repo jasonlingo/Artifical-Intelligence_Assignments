@@ -139,9 +139,10 @@ class Classifier:
                 countPrediction[pred_label] = 1
 
         accuracy = float(correct) / len(test_data)
-        print "The accuracy for", mode, "is", accuracy
         print "Predict counter:", countPrediction
         print "Correct counter:", countCorrect
+        print "The accuracy for", mode, "is", accuracy
+
 
         for key in countPrediction.keys():
             print "precision for key:", key, " = ", countCorrect[key] / float(countPrediction[key])
