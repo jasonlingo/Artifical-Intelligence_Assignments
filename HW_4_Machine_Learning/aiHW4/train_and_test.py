@@ -12,6 +12,36 @@ you want to use. But in this module you will need to
 3) train the algorithm
 4) test it and output the desired statistics.
 """
+def runDecisionTree(train, test, igMode):
+    print "Decision Tree =============="
+    print " - using ", igMode
+    dt = Classifier("decision_tree", igMode=igMode)
+    dt.train(train.copy())
+    dt.test(test.copy(), "test")
+
+def runNaiveBayes(train, test):
+    print "Naive Bayes ================"
+    nb = Classifier("naive_bayes")
+    nb.train(train.copy())
+    nb.test(test.copy(), "test")
+
+def runNeuralNetwork(train, test, hLayer=None, mode=None):
+    print "Neural Network ============= "
+    print " - hidden layer: ",
+    if hLayer is not None:
+        print hLayer
+    else:
+        print " default (one hidden layer with node number = 2 * feature number)"
+
+    print " - weight initialization mode: ",
+    if mode is not None:
+        print mode
+    else:
+        print "default"
+
+    nn = Classifier("neural_network", hidden_layer=hLayer, weightInitMode=mode)
+    nn.train(train.copy())
+    nn.test(test.copy(), "test")
 
 
 '''
@@ -20,49 +50,33 @@ you want to use. But in this module you will need to
 =====================================================================
 '''
 print "====== Decision Tree ========================================="
-# ''' 1.Congressional Voting Records dataset '''
-# print "Congressional Voting Records with Information Gain"
-# (trainingData, testData) = load_data.load_congress_data(0.6)
-# dt = Classifier("decision_tree", igMode="ig")
-# dt.train(trainingData)
-# dt.test(testData)
-#
-# print "Congressional Voting Records with Information Gain Ratio"
-# dt = Classifier("decision_tree", igMode="igr")
-# dt.train(trainingData)
-# dt.test(testData)
+''' 1.Congressional Voting Records dataset '''
+(trainingData, testData) = load_data.load_congress_data(0.6)
+# ======================
+runDecisionTree(trainingData, testData, "ig")
+# ======================
+runDecisionTree(trainingData, testData, "igr")
 
 ''' 2. MONKS Problem dataset '''
-# print ""
-# print "MONKS Problem with Information Gain"
-# (trainingData, testData) = load_data.load_monks(3)
-# dt = Classifier("decision_tree", igMode="ig")
-# dt.train(trainingData)
-# dt.test(testData)
-#
-# print "MONKS Problem with Information Gain Ratio"
-# dt = Classifier("decision_tree", igMode="igr")
-# dt.train(trainingData)
-# dt.test(testData)
+print ""
+for i in [1, 2, 3]:
+    print "MONKS Problem with Information Gain - dataset ", i
+    (trainingData, testData) = load_data.load_monks(i)
+    # ======================
+    runDecisionTree(trainingData, testData, "ig")
+    # ======================
+    runDecisionTree(trainingData, testData, "igr")
 
 ''' 3. Iris dataset '''
-# print ""
-# print "3. Iris with Information Gain"
-# (trainingData, testData) = load_data.load_iris(0.6)
-#
-# for i in range(len(trainingData[0])):
-#     print i
-#     print sorted(set([d[i] for d in trainingData]))
-#     print sorted(set([d[i] for d in testData]))
-#
-# dt = Classifier("decision_tree", igMode="ig")
-# dt.train(trainingData)
-# dt.test(testData)
-#
-# print "Iris with Information Gain Ratio"
-# dt = Classifier("decision_tree", igMode="igr")
-# dt.train(trainingData)
-# dt.test(testData)
+print ""
+print "3. Iris"
+(trainingData, testData) = load_data.load_iris(0.6)
+trainingData = np.floor(trainingData)
+testData = np.floor(testData)
+# ======================
+runDecisionTree(trainingData, testData, "ig")
+# ======================
+runDecisionTree(trainingData, testData, "igr")
 
 
 '''
@@ -70,25 +84,32 @@ print "====== Decision Tree ========================================="
  Naive Bayes
 =====================================================================
 '''
-# print "====== Naive Bayes ==========================================="
+print ""
+print "====== Naive Bayes ==========================================="
 ''' 1.Congressional Voting Records dataset '''
-# print "1. Congressional Voting Records with Information Gain"
-# (trainingData, testData) = load_data.load_congress_data(0.6)
-# dt = Classifier("decision_tree", igMode="ig")
-# dt.train(trainingData)
-# dt.test(testData)
-#
-# print "1. Congressional Voting Records with Information Gain Ratio"
-# dt = Classifier("decision_tree", igMode="igr")
-# dt.train(trainingData)
-# dt.test(testData)
+(trainingData, testData) = load_data.load_congress_data(0.6)
+# ======================
+runNaiveBayes(trainingData, testData)
+# ======================
+runNaiveBayes(trainingData, testData)
 
 ''' 2. MONKS Problem dataset '''
-
-
+for i in [1, 2, 3]:
+    print "MONKS Problem with Information Gain - dataset ", i
+    (trainingData, testData) = load_data.load_monks(i)
+    # ======================
+    runNaiveBayes(trainingData, testData)
+    # ======================
+    runNaiveBayes(trainingData, testData)
 
 ''' 3. Iris dataset '''
-
+(trainingData, testData) = load_data.load_iris(0.6)
+trainingData = np.floor(trainingData)
+testData = np.floor(testData)
+# ======================
+runNaiveBayes(trainingData, testData)
+# ======================
+runNaiveBayes(trainingData, testData)
 
 
 '''
@@ -96,29 +117,60 @@ print "====== Decision Tree ========================================="
  Neural Network
 =====================================================================
 '''
-print ("====== Neural Network ========================================")
-''' 1.Congressional Voting Records dataset '''
-print ("1. Congressional Voting Records with Information Gain")
+print ""
+print "====== Neural Network ========================================"
+print "1. Congressional Voting Records"
+
 (trainingData, testData) = load_data.load_congress_data(0.6)
-dt = Classifier("neural_network", weightInitMode="shallow")
-dt.train(trainingData)
-dt.test(testData)
+# ======================
+weightInitMode = None
+hidden_layer   = [32]
+runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+# ======================
+weightInitMode = "shallow"
+hidden_layer   = [32]
+runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+# ======================
+weightInitMode = "deep"
+hidden_layer   = [32, 32, 32]
+runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
 
 
 ''' 2. MONKS Problem dataset '''
-# print ""
-# for i in [1, 2, 3]:
-#     print "MONKS Problem with Information Gain - dataset ", i
-#     (trainingData, testData) = load_data.load_monks(i)
-#     dt = Classifier("neural_network", weightInitMode=None)
-#     dt.train(trainingData)
-#     dt.test(testData)
+print ""
+
+for i in [1, 2, 3]:
+    print "MONKS Problem with Information Gain - dataset ", i
+    (trainingData, testData) = load_data.load_monks(i)
+    # ======================
+    weightInitMode = None
+    hidden_layer   = [14]
+    runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+    # ======================
+    weightInitMode = "shallow"
+    hidden_layer   = [14]
+    runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+    # ======================
+    weightInitMode = "deep"
+    hidden_layer   = [14, 14, 14]
+    runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+
 
 ''' 3. Iris dataset '''
-# print ""
-# print "3. Iris"
-# (trainingData, testData) = load_data.load_iris(0.6)
-#
-# dt = Classifier("neural_network", weightInitMode="shallow")
-# dt.train(trainingData)
-# dt.test(testData)
+print ""
+print "3. Iris"
+(trainingData, testData) = load_data.load_iris(0.6)
+
+# ======================
+weightInitMode = None
+hidden_layer   = [16]
+runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+# ======================
+weightInitMode = "shallow"
+hidden_layer   = [16]
+runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+# ======================
+weightInitMode = "deep"
+hidden_layer   = [16, 16, 16]
+runNeuralNetwork(trainingData, testData, hidden_layer, weightInitMode)
+

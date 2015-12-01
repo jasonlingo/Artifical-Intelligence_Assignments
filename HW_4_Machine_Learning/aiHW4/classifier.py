@@ -3,7 +3,7 @@ Class for a classification algorithm.
 """
 
 import numpy as np
-
+from collections import Counter
 
 class Classifier:
 
@@ -51,34 +51,50 @@ class Classifier:
         """
         if self.classifier_type == "decision_tree":
             from DecisionTree import DecisionTree
-            attributes = [i for i in range(1, len(training_data[0]))]  # attributes' indices
+            m, n = training_data.shape
+            attributes = [i for i in range(1, n)]  # attributes' indices
             attrValue = self.getAttrValue(training_data)
-            # print attributes
-            # print attrValue
             if "igMode" in self.params:
                 igMode = self.params["igMode"]
             else:
                 igMode = "ig"
             self.clf = DecisionTree(igMode, training_data, attributes, None, attrValue)
             self.clf.train()
+            self.test(training_data, "training")
+
+        elif self.classifier_type == "naive_bayes":
+            from NaiveBayes import NaiveBayes
+            m, n = training_data.shape
+            attribute = [i for i in range(1, n)]
+
+            self.clf = NaiveBayes(training_data, attribute)
+            self.clf.train()
+            self.test(training_data, "training")
 
         elif self.classifier_type == "neural_network":
             from NeuralNetwork import NeuralNetwork
-            featureNum = training_data.shape[1] - 1                    # minus the one for label
-            # nodeNum = [featureNum, featureNum * 2, featureNum * 2, 1]  # FIXME: make it become a parameter
-            print "featureNum = ", featureNum
-            nodeNum = [featureNum, featureNum * 2, featureNum * 2, 1]    # FIXME: find the number of classes automatically
+            # find the numbers for feature and label
+            featureNum = training_data.shape[1] - 1
+            labelNum = len(np.unique(training_data[:, :1]))
 
-            if "weightInitMode" in self.params:
+            # get the number of nodes for each layer
+            if "hidden_layer" in self.params and self.params["hidden_layer"] is not None:
+                nodeNum = [featureNum] + self.params["hidden_layer"] + [labelNum]
+            else:
+                nodeNum = [featureNum, featureNum * 2, labelNum]
+
+            # get the mode for initializing the weight
+            if "weightInitMode" in self.params and self.params["weightInitMode"] is not None:
                 weightInitMode = self.params["weightInitMode"]
             else:
                 weightInitMode = None
 
             self.clf = NeuralNetwork(training_data, nodeNum, weightInitMode)
             self.clf.train()
+            self.test(training_data, "training")
 
-        elif self.classifier_type == "naive_bayes":
-            pass
+        else:
+            print "Wrong classifier name. Please check again!"
 
     def predict(self, data):
         """
@@ -94,7 +110,7 @@ class Classifier:
         """
         return self.clf.predict(data)
 
-    def test(self, test_data):
+    def test(self, test_data, mode):
         """
         Data should be nx(m+1) numpy matrix where n is the
         number of examples and m is the number of features
@@ -102,31 +118,44 @@ class Classifier:
 
         You should print the accuracy, precision, and recall on the test data.
         """
-        classLabel = self.getAttrValue(test_data)[0]
+        correct = 0
+        countPrediction = {}
+        countCorrect = {}
+        countTotal = Counter(list(test_data[:, 0]))
 
-        count = {}
-        for label in classLabel:
-            count[label] = {}
-            count[label]["correct"] = 0
-            count[label]["incorrect"] = 0
+        for e in test_data:
+            label = e[0]
+            pred_label = self.predict(e)
+            if label == pred_label:
+                correct += 1
+                if e[0] in countCorrect:
+                    countCorrect[e[0]] += 1
+                else:
+                    countCorrect[e[0]] = 1
 
-        for data in test_data:
-            if data[0] == self.predict(data):
-                count[self.predict(data)]["correct"] += 1
+            if pred_label in countPrediction:
+                countPrediction[pred_label] += 1
             else:
-                count[self.predict(data)]["incorrect"] += 1
+                countPrediction[pred_label] = 1
 
-        print (count)
+        accuracy = float(correct) / len(test_data)
+        print "The accuracy for", mode, "is", accuracy
+        print "Predict counter:", countPrediction
+        print "Correct counter:", countCorrect
 
-        print ("total accuracy              = ", sum([count[label]["correct"] for label in count]) / float(len(test_data)))
-        # 0: false; 1: true
-        # for label in classLabel:  # FIXME
-        #     print "precision for class '", label, "' = ", count[label]["correct"] / float(sum([count[label]["correct"]] + [count[label2]["incorrect"] for label2 in classLabel if label2 != label]))
-        #     print "recall for class '", label, "'    = ", count[label]["correct"] / float(sum(count[label].values()))
+        for key in countPrediction.keys():
+            print "precision for key:", key, " = ", countCorrect[key] / float(countPrediction[key])
+            print "recall for key:", key, "    = ", countCorrect[key] / float(countTotal[key])
+        print
 
     def getAttrValue(self, ex):
+        """
+        Find the attribute values in each attribute.
+        Args:
+            ex: given examples
+        Returns: a dictionary where the keys are the attribute indices and the values are the attribute values.
+        """
         attrValue = {}
         for i in range(len(ex[0])):
-            # attrValue[i] = list(set((ex[:,i]))
-            attrValue[i] = list(set([v for v in ex[:,i]]))
+            attrValue[i] = list(set([v for v in ex[:, i]]))
         return attrValue

@@ -9,13 +9,15 @@ class DecisionTree(Classifier):
     """
     def __init__(self, igMode, training_data, attributes, parentExample, attrValue):
         self.igMode = igMode
-        self.example = training_data  # training example
+        self.example = training_data
         self.attributes = attributes
         self.parentEx = parentExample
         self.attrValue = attrValue
 
         self.subtree = {}
         self.attrIdx = None
+
+        self.pruneThreshold = 0.05
 
     def train(self):
         if self.example == []:
@@ -25,24 +27,34 @@ class DecisionTree(Classifier):
         elif self.attributes == []:
             return self.pluralityValue(self.example)
         else:
-            self.attrIdx = self.argmaxAIG(self.example)
+            self.attrIdx, ig = self.argmaxAIG(self.example)
 
-            # for v in self.valueOfA(a, self.example):
-            for v in self.attrValue[self.attrIdx]:
-            # for v in [0.0, 1.0, 2.0]:
-                exs = [e for e in self.example if e[self.attrIdx] == v]
-                newAttr = self.attributes[:]
-                newAttr.remove(self.attrIdx)
-                newTree = DecisionTree(self.igMode, exs, newAttr, self.example, self.attrValue).train()
-                self.subtree[v] = newTree
+            # print ig
+            if ig < self.pruneThreshold:
+                return self.pluralityValue(self.example)
+            else:
+                for v in self.attrValue[self.attrIdx]:
+                    exs = [e for e in self.example if e[self.attrIdx] == v]
+                    newAttr = self.attributes[:]
+                    newAttr.remove(self.attrIdx)
+                    newTree = DecisionTree(self.igMode, exs, newAttr, self.example, self.attrValue).train()
+                    self.subtree[v] = newTree
 
-            return self
+                return self
 
     def predict(self, data):
-        if data[self.attrIdx] not in self.subtree:  # FIXME
-            return self.pluralityValue(self.parentEx)
+        """
+        Predict the label of the given data. If the attribute value is not in the subtree, then return the
+        pluralityValue of the example in this tree node.
+        Args:
+            data: the given data
+        Returns:
+            a label
+        """
+        if data[self.attrIdx] not in self.subtree:
+            return self.pluralityValue(self.example)
 
-        if isinstance(self.subtree[data[self.attrIdx]], DecisionTree): # use round() because some 0.6 will be 0.59999999999999998
+        if isinstance(self.subtree[data[self.attrIdx]], DecisionTree):
             return self.subtree[data[self.attrIdx]].predict(data)
         else:
             return self.subtree[data[self.attrIdx]]
@@ -60,7 +72,8 @@ class DecisionTree(Classifier):
         """
         labelCount = self.countLabels(ex)
         if labelCount is None:
-            return 0  # FIXME
+            print "Error in pluralityValue: no label found"
+            return 0
         return max(labelCount.iteritems(), key=operator.itemgetter(1))[0]
 
     def valueOfA(self, a, ex):
@@ -82,11 +95,10 @@ class DecisionTree(Classifier):
     def argmaxAIG(self, ex):
         """
         Find the attribute with maximum information gain.
-
         Args:
             ex: the given examples
         Returns:
-            the attribute index that has the maximum information gain.
+            the attribute index that has the maximum information gain and the information gain value.
         """
         maxAIdx = None
         maxAGain = -1
@@ -97,7 +109,7 @@ class DecisionTree(Classifier):
             if ig > maxAGain:
                 maxAIdx = a
                 maxAGain = ig
-        return maxAIdx
+        return maxAIdx, maxAGain
 
     def informationGain(self, a, ex):
         entropy = self.entropy(ex)
@@ -172,3 +184,12 @@ class DecisionTree(Classifier):
         """
         labels = [e[0] for e in ex]
         return len(set(labels)) == 1
+
+    def printtree(self, height):
+        print "height =", height
+        print self.subtree
+        for s in self.subtree:
+            print s
+            if isinstance(self.subtree[s], DecisionTree):
+                self.subtree[s].printtree(height+1)
+

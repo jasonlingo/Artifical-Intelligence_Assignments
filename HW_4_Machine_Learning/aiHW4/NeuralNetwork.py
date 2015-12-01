@@ -6,21 +6,21 @@ from collections import Counter
 
 class NeuralNetwork(Classifier):
     """
-    A neural network classifier.
+    A neural network classifier with feed forward and back-propagation.
     """
 
     def __init__(self, training_data, nodeNum, weightInitMode=None):
         # number of total training iteration
-        self.ITERATION = 10000
+        self.ITERATION = 5000
 
         # for randomly initializing theta
         self.EPISLON = 0.12
 
         # learning rate
-        self.ALPHA = 0.03
+        self.ALPHA = 0.01
 
         # decay rate for momentum
-        self.momentum_factor = 0.5
+        self.momentum_factor = 0.8
 
         # dictionary for momentum
         self.momentum = {}
@@ -42,7 +42,6 @@ class NeuralNetwork(Classifier):
         self.weightInitMode = weightInitMode
 
         self.theta = {}
-        # self.layers = {}
         self.delta = {}
         self.z = {}
         self.a = {}
@@ -50,7 +49,6 @@ class NeuralNetwork(Classifier):
 
         # get labels and nodes for the first layer (input layer)
         self.labels, self.x = self.splitData(training_data)
-        # self.a[1] = self.x
 
     def splitData(self, training_data):
         """
@@ -61,7 +59,7 @@ class NeuralNetwork(Classifier):
             labels: a (exampleNum x classNum) matrix that contains label for each training example
             examples: a (exampleNum x featureNum ) matrix for the input training example
         """
-        if self.classNum > 2:
+        if self.classNum > 1:
             labels = np.zeros((len(training_data), self.classNum))
             for i, label in enumerate(training_data[:, 0].reshape(len(training_data), 1)):
                 labels[i][int(label)] = 1.0
@@ -78,36 +76,26 @@ class NeuralNetwork(Classifier):
     def train(self):
         """
         Train this neural network with feed-forward and back-propagation.
-        When training is finished, the theta can be used for prediction.
-        Args:
-            training_data: a matrix (numpy format).
-        """
-        print ("Start training neural network...")
+        It will first initialize the weight according to different initialization
+        methods (default, shallow, deep). The training process will be run
 
+        When training is finished, the theta can be used for prediction.
+        """
         self.initTheta()
 
-        training = True
         iter = 0
-        # for iter in range(self.ITERATION):
-        while training and iter <= self.ITERATION:
+        cost = 1
+        while cost > 0.01 and iter <= self.ITERATION:
             iter += 1
             yHat = self.feedForward(self.x)
-            cost, costMat = self.cost(self.labels, yHat)
-            if cost < 0.01:
-                training = False
-
-            if iter % 1000 == 0:
-                print "cost = ", cost, " (", iter, " iteration)"
-
+            cost = self.cost(self.labels, yHat)
             self.backpropagation()
             self.updateTheta()
 
-            if iter % 500000 == 0:
-                decision = raw_input("Continue training? (Y/N)")
-                if decision.lower() == "n":
-                    training = False
+            # if iter % 1000 == 0:
+            #     print "cost = ", cost, " (", iter, " iteration)"
 
-        print ("cost = ", cost)
+        # print "cost = ", cost
 
     def initTheta(self):
         """
@@ -144,7 +132,7 @@ class NeuralNetwork(Classifier):
         """
         Compute all the x in each layer except the first input layer.
         """
-        self.a[1] = x.T  # transform the example to a column-based matrix
+        self.a[1] = x.T  # transform the example to a column-based matrix (just for convention)
 
         for i in range(1, self.layerNum):
             self.z[i+1] = np.dot(self.theta[i].T, self.a[i])
@@ -159,35 +147,29 @@ class NeuralNetwork(Classifier):
     def backpropagation(self):
         """
         Compute all the delta for each layer except the first input layer.
+        Compute the derivative for each layer except the last output layer.
         """
         # compute the delta for the output layer delta = (y - a) .* a .* (1 - a)
         self.delta[self.layerNum] = -(self.labels - self.a[self.layerNum]) * sigmoidDe(self.z[self.layerNum])
 
-        # compute the delta for other layers (from layerNum - 1 to 1)
+        # compute the delta for other layers (from layerNum - 1 to 2)
+        # compute the derivative (d cost / d weight) for layerNum -1 to 1
         # no delta for input layer
         for l in range(self.layerNum - 1, 1, -1):
-            if l + 1 != self.layerNum:
-                preDelta = self.delta[l+1]#[:-1, :]  # ignore the bias # FIXME: check
-            else:
-                preDelta = self.delta[l+1]
+            preDelta = self.delta[l+1]
             self.djdw[l] = np.dot(self.a[l], preDelta.T)
             self.delta[l] = np.dot(self.theta[l][:-1, :], preDelta) * sigmoidDe(self.z[l])
         self.djdw[1] = np.dot(self.a[1], self.delta[2].T)
 
     def updateTheta(self):
         """
-        Update every theta in network using deltas.
+        Update every theta in network using deltas. Also implemented momentum to
+        speed up the weight update.
         for each layer of theta:
-            theta_ij = theta_ij + self.ALPHA * a_i * delta_j
+            theta_ij = theta_ij - (self.ALPHA * a_i * delta_j + momentum)
         """
         for l in range(self.layerNum - 1, 0, -1):
-            # print self.theta[l].shape
-            if l + 1 < self.layerNum:
-                preDelta = self.delta[l+1].T
-            else:
-                preDelta = self.delta[l+1].T
-
-            thisMomentum = self.ALPHA * np.dot(self.a[l], preDelta)
+            thisMomentum = self.ALPHA * np.dot(self.a[l], self.delta[l+1].T)
             if l in self.momentum:
                 lastMomentum = self.momentum[l]
             else:
@@ -196,9 +178,17 @@ class NeuralNetwork(Classifier):
             self.momentum[l] = thisMomentum
 
     def cost(self, labels, yHat):
+        """
+        Args:
+            labels: the true labels of the data
+            yHat: the predicted of the data
+        Returns:
+            cost: the cost of the prediction
+            costMat: the
+        """
         costMat = labels - yHat
         cost = sum(sum(costMat * costMat)) / 2.0
-        return cost, costMat
+        return cost
 
     def predict(self, data):
         data = data.reshape(1, data.shape[0])
@@ -206,21 +196,21 @@ class NeuralNetwork(Classifier):
 
         yHat = self.feedForward(feature)
 
-        if self.classNum > 2:
-            maxV = -1
-            maxIdx = None
-            i = 0
-            for y in yHat:
-                if y > maxV:
-                    maxV = y
-                    maxIdx = i
-                i += 1
-            return maxIdx
-        else:
-            if yHat.max() >= 0.5:
-                return 1
-            else:
-                return 0
+        # if self.classNum > 1:
+        maxV = -1
+        maxIdx = None
+        i = 0
+        for y in yHat:
+            if y > maxV:
+                maxV = y
+                maxIdx = i
+            i += 1
+        return maxIdx
+        # else:
+        #     if yHat.max() >= 0.5:
+        #         return 1
+        #     else:
+        #         return 0
 
 
 # ===================================================================
