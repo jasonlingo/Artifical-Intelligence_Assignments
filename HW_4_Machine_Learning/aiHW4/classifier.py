@@ -67,7 +67,7 @@ class Classifier:
             featureNum = training_data.shape[1] - 1                    # minus the one for label
             # nodeNum = [featureNum, featureNum * 2, featureNum * 2, 1]  # FIXME: make it become a parameter
             print "featureNum = ", featureNum
-            nodeNum = [featureNum, featureNum + 5, 1]
+            nodeNum = [featureNum, featureNum * 2, featureNum * 2, 1]    # FIXME: find the number of classes automatically
 
             if "weightInitMode" in self.params:
                 weightInitMode = self.params["weightInitMode"]

@@ -98,11 +98,11 @@ print "====== Decision Tree ========================================="
 '''
 print ("====== Neural Network ========================================")
 ''' 1.Congressional Voting Records dataset '''
-# print ("1. Congressional Voting Records with Information Gain")
-# (trainingData, testData) = load_data.load_congress_data(0.6)
-# dt = Classifier("neural_network", weightInitMode=None)
-# dt.train(trainingData)
-# dt.test(testData)
+print ("1. Congressional Voting Records with Information Gain")
+(trainingData, testData) = load_data.load_congress_data(0.6)
+dt = Classifier("neural_network", weightInitMode="shallow")
+dt.train(trainingData)
+dt.test(testData)
 
 
 ''' 2. MONKS Problem dataset '''
@@ -115,10 +115,10 @@ print ("====== Neural Network ========================================")
 #     dt.test(testData)
 
 ''' 3. Iris dataset '''
-print ""
-print "3. Iris"
-(trainingData, testData) = load_data.load_iris(0.6)
-
-dt = Classifier("neural_network", weightInitMode="shallow")
-dt.train(trainingData)
-dt.test(testData)
+# print ""
+# print "3. Iris"
+# (trainingData, testData) = load_data.load_iris(0.6)
+#
+# dt = Classifier("neural_network", weightInitMode="shallow")
+# dt.train(trainingData)
+# dt.test(testData)
