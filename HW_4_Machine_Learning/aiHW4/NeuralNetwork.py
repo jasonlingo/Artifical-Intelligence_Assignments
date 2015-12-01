@@ -1,6 +1,8 @@
 from classifier import Classifier
 import numpy as np
 import math
+from collections import Counter
+
 
 class NeuralNetwork(Classifier):
     """
@@ -44,10 +46,11 @@ class NeuralNetwork(Classifier):
         self.delta = {}
         self.z = {}
         self.a = {}
+        self.djdw = {}
 
         # get labels and nodes for the first layer (input layer)
         self.labels, self.x = self.prepareForTraining(training_data)
-        self.a[1] = self.x
+        # self.a[1] = self.x
 
     def prepareForTraining(self, training_data):
         """
@@ -59,7 +62,7 @@ class NeuralNetwork(Classifier):
             examples: a (exampleNum x featureNum ) matrix for the input training example
         """
         labels = training_data.copy()[:, 0]          # get the first column (label) from the matrix
-        labels = labels.reshape(labels.shape[0], 1)
+        labels = labels.reshape(labels.shape[0], 1).T
 
         # FIXME: move to feedforward
         examples = training_data.copy()[:, 1:]       # get the rest columns (features of examples) from the matrix
@@ -83,9 +86,9 @@ class NeuralNetwork(Classifier):
         # for iter in range(self.ITERATION):
         while training and iter <= self.ITERATION:
             iter += 1
-            self.feedForward()
-            cost, costMat = self.cost()
-            if cost < 2:
+            yHat = self.feedForward(self.x)
+            cost, costMat = self.cost(self.labels, yHat)
+            if cost < 0.01:
                 training = False
 
             if iter % 1000 == 0:
@@ -129,26 +132,40 @@ class NeuralNetwork(Classifier):
                 initW[i] = math.sqrt(6) / math.sqrt(self.nodeNum[i] + self.nodeNum[i+1])
 
         for i in range(1, self.layerNum):  # layer number starts from 1,  add one bias
-            th = np.random.rand(self.nodeNum[i+1], self.nodeNum[i] + 1) * 2 * initW[i] - initW[i]
+            # th = np.random.rand(self.nodeNum[i+1], self.nodeNum[i] + 1) * 2 * initW[i] - initW[i]
 
             # theta[previous layer, next layer]
-            # th = np.random.rand(self.nodeNum[i] + 1, self.nodeNum[i]) * 2 * initW[i] - initW[i]
+            th = np.random.rand(self.nodeNum[i] + 1, self.nodeNum[i+1]) * 2 * initW[i] - initW[i]
             self.theta[i] = th
 
-    def feedForward(self):
+    def feedForward(self, x):
         """
         Compute all the x in each layer except the first input layer.
         """
         # print "feedforward"
+        self.a[1] = x.T  # transform the example to a column-based matrix
 
         for i in range(1, self.layerNum):
-            self.z[i + 1] = self.a[i].dot(self.theta[i].T)                # z_{i+1} = a_i * theta_i
-            self.a[i + 1] = sigmoid(self.z[i + 1])                        # a_{i+1} = sigmoid(z_{i+1})
+            # print i, "th layer"
+            # self.z[i + 1] = self.a[i].dot(self.theta[i].T)                # z_{i+1} = a_i * theta_i
+            # self.a[i + 1] = sigmoid(self.z[i + 1])                        # a_{i+1} = sigmoid(z_{i+1})
+
+            # print self.theta[i].T.shape
+            # print self.a[i].shape
+
+            self.z[i+1] = np.dot(self.theta[i].T, self.a[i])
+            self.a[i+1] = sigmoid(self.z[i+1])
 
             # add bias column to each layer except the output layer
             if i + 1 < self.layerNum:
-                onesCol = np.ones((self.a[i + 1].shape[0], 1))
-                self.a[i + 1] = np.hstack((self.a[i + 1], onesCol))
+                # onesCol = np.ones((self.a[i + 1].shape[0], 1))
+                # self.a[i + 1] = np.hstack((self.a[i + 1], onesCol))
+                # print "add row"
+                # print self.a[i+1].shape
+                conesRow = np.ones((1, self.a[i+1].shape[1]))
+                self.a[i+1] = np.vstack((self.a[i+1], conesRow))
+                # print self.a[i+1].shape
+        return self.a[self.layerNum]
 
 
     def backpropagation(self):
@@ -158,10 +175,7 @@ class NeuralNetwork(Classifier):
         # print "backpropagation"
 
         # compute the delta for the output layer delta = (y - a) .* a .* (1 - a)
-        self.delta[self.layerNum] = (self.labels - self.a[self.layerNum]) * self.a[self.layerNum] * (1 - self.a[self.layerNum])
-
-        # self.delta[self.layerNum] = (self.labels - self.a[self.layerNum])
-
+        self.delta[self.layerNum] = -(self.labels - self.a[self.layerNum]) * sigmoidDe(self.z[self.layerNum])
 
         # compute the delta for other layers (from layerNum - 1 to 1)
         # no delta for input layer
@@ -176,13 +190,20 @@ class NeuralNetwork(Classifier):
             # print "-------------------------------------"
 
             if l + 1 != self.layerNum:
-                preDelta = self.delta[l+1][:, :-1]  # ignore the bias
+                preDelta = self.delta[l+1]#[:-1, :]  # ignore the bias
             else:
                 preDelta = self.delta[l+1]
-
-            # self.delta[l] = self.a[l] * (1 - self.a[l]) * (preDelta.dot(self.theta[l]))
-            self.delta[l] = preDelta.dot(self.theta[l])
-            # print self.delta[l].shape
+            self.djdw[l] = np.dot(self.a[l], preDelta.T)
+            # print l, " ----------"
+            # print self.theta[l][:-1, :].shape
+            # print preDelta.shape
+            # print sigmoidDe(self.z[l]).shape
+            self.delta[l] = np.dot(self.theta[l][:-1, :], preDelta) * sigmoidDe(self.z[l])
+        self.djdw[1] = np.dot(self.a[1], self.delta[2].T)
+        # print "didw shape:"
+        # for i in range(1, self.layerNum):
+        #     print self.djdw[i].shape
+        # return
 
     def updateTheta(self):
         """
@@ -190,42 +211,50 @@ class NeuralNetwork(Classifier):
         for each layer of theta:
             theta_ij = theta_ij + self.ALPHA * a_i * delta_j
         """
-        # print "udpate theta"
-        for l in range(self.layerNum - 1, 0, -1):
-            # print self.theta[l].shape
-            if l + 1 < self.layerNum:
-                preDelta = self.delta[l+1][:, :-1].T
-            else:
-                preDelta = self.delta[l+1].T
-            # print preDelta.shape
-            # print self.a[l].shape
 
-            thisMomentum = self.ALPHA * (preDelta.dot(self.a[l]))
-            if l in self.momentum:
-                lastMomentum = self.momentum[l]
-            else:
-                lastMomentum = 0
-            self.theta[l] += thisMomentum + self.momentum_factor * lastMomentum
-            self.momentum[l] = thisMomentum
+        for l in range(1, self.layerNum):
+            self.theta[l] -= self.ALPHA * self.djdw[l]
+        # # print "udpate theta"
+        # for l in range(self.layerNum - 1, 0, -1):
+        #     # print self.theta[l].shape
+        #     if l + 1 < self.layerNum:
+        #         preDelta = self.delta[l+1][:, :-1].T
+        #     else:
+        #         preDelta = self.delta[l+1].T
+        #     # print preDelta.shape
+        #     # print self.a[l].shape
+        #
+        #     thisMomentum = self.ALPHA * (preDelta.dot(self.a[l]))
+        #     if l in self.momentum:
+        #         lastMomentum = self.momentum[l]
+        #     else:
+        #         lastMomentum = 0
+        #     self.theta[l] += thisMomentum + self.momentum_factor * lastMomentum
+        #     self.momentum[l] = thisMomentum
 
-    def cost(self):
-        costMat = self.labels - self.a[self.layerNum]
-        cost = sum(sum(costMat * costMat))
+    def cost(self, labels, yHat):
+        costMat = labels - yHat
+        cost = sum(sum(costMat * costMat)) / 2.0
         # print "cost = ", cost
         return cost, costMat
 
     def predict(self, data):
+        # print "predict"
+        # print data.shape
         data = data.reshape(1, data.shape[0])
+        # print data.shape
+        # data = data.reshape(1, data.shape[0]).T
         # print "the dimension of input data is ", data.shape
-        for l in range(1, self.layerNum):
-            # print l, "-th layer"
-            # print data.shape
-            # print transpose(self.theta[l]).shape
-            data = data.dot(self.theta[l].T)
-            data = sigmoid(data)
-            if l + 1 < self.layerNum:
-                onesCol = np.ones((data.shape[0], 1))
-                data = np.hstack((data, onesCol))
+        # for l in range(1, self.layerNum):
+        #     # print l, "-th layer"
+        #     # print data.shape
+        #     # print transpose(self.theta[l]).shape
+        #     data = data.dot(self.theta[l].T)
+        #     data = sigmoid(data)
+        #     if l + 1 < self.layerNum:
+        #         onesCol = np.ones((data.shape[0], 1))
+        #         data = np.hstack((data, onesCol))
+        yHat = self.feedForward(data)
 
         if self.classNum > 2:
             maxV = -1
@@ -238,10 +267,15 @@ class NeuralNetwork(Classifier):
                 i += 1
             return maxIdx
         else:
-            if data.max() >= 0.5:
+            if yHat.max() >= 0.5:
+                print yHat, " -> ", 1
                 return 1
             else:
+                print yHat, " -> ", 0
                 return 0
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
+
+def sigmoidDe(z):
+    return sigmoid(z) * (1 - sigmoid(z))

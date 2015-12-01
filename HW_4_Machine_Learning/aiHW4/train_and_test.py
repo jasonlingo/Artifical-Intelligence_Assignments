@@ -19,7 +19,7 @@ you want to use. But in this module you will need to
  Decision Tree
 =====================================================================
 '''
-# print "====== Decision Tree ========================================="
+print "====== Decision Tree ========================================="
 # ''' 1.Congressional Voting Records dataset '''
 # print "Congressional Voting Records with Information Gain"
 # (trainingData, testData) = load_data.load_congress_data(0.6)
@@ -31,21 +31,21 @@ you want to use. But in this module you will need to
 # dt = Classifier("decision_tree", igMode="igr")
 # dt.train(trainingData)
 # dt.test(testData)
-#
-# ''' 2. MONKS Problem dataset '''
+
+''' 2. MONKS Problem dataset '''
 # print ""
 # print "MONKS Problem with Information Gain"
-# (trainingData, testData) = load_data.load_monks(2)
+# (trainingData, testData) = load_data.load_monks(3)
 # dt = Classifier("decision_tree", igMode="ig")
 # dt.train(trainingData)
 # dt.test(testData)
 #
-# print "Congressional Voting Records with Information Gain Ratio"
+# print "MONKS Problem with Information Gain Ratio"
 # dt = Classifier("decision_tree", igMode="igr")
 # dt.train(trainingData)
 # dt.test(testData)
-#
-# ''' 3. Iris dataset '''
+
+''' 3. Iris dataset '''
 # print ""
 # print "3. Iris with Information Gain"
 # (trainingData, testData) = load_data.load_iris(0.6)
@@ -98,22 +98,27 @@ you want to use. But in this module you will need to
 '''
 print ("====== Neural Network ========================================")
 ''' 1.Congressional Voting Records dataset '''
-print ("1. Congressional Voting Records with Information Gain")
-(trainingData, testData) = load_data.load_congress_data(0.6)
-dt = Classifier("neural_network", weightInitMode=None)
-dt.train(trainingData)
-dt.test(testData)
+# print ("1. Congressional Voting Records with Information Gain")
+# (trainingData, testData) = load_data.load_congress_data(0.6)
+# dt = Classifier("neural_network", weightInitMode=None)
+# dt.train(trainingData)
+# dt.test(testData)
 
 
 ''' 2. MONKS Problem dataset '''
-
-
+# print ""
+# for i in [1, 2, 3]:
+#     print "MONKS Problem with Information Gain - dataset ", i
+#     (trainingData, testData) = load_data.load_monks(i)
+#     dt = Classifier("neural_network", weightInitMode=None)
+#     dt.train(trainingData)
+#     dt.test(testData)
 
 ''' 3. Iris dataset '''
-# print ""
-# print "3. Iris with Information Gain"
-# (trainingData, testData) = load_data.load_iris(0.6)
-#
-# nn = Classifier("neural_network", weightInitMode="shallow")
-# nn.train(trainingData)
-# nn.test(testData)
+print ""
+print "3. Iris"
+(trainingData, testData) = load_data.load_iris(0.6)
+
+dt = Classifier("neural_network", weightInitMode="shallow")
+dt.train(trainingData)
+dt.test(testData)

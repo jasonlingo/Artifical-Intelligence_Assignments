@@ -55,14 +55,19 @@ class Classifier:
             attrValue = self.getAttrValue(training_data)
             # print attributes
             # print attrValue
-            self.clf = DecisionTree(self.params["igMode"], training_data, attributes, None, attrValue)
+            if "igMode" in self.params:
+                igMode = self.params["igMode"]
+            else:
+                igMode = "ig"
+            self.clf = DecisionTree(igMode, training_data, attributes, None, attrValue)
             self.clf.train()
 
         elif self.classifier_type == "neural_network":
             from NeuralNetwork import NeuralNetwork
             featureNum = training_data.shape[1] - 1                    # minus the one for label
             # nodeNum = [featureNum, featureNum * 2, featureNum * 2, 1]  # FIXME: make it become a parameter
-            nodeNum = [featureNum, featureNum * 3, 1]
+            print "featureNum = ", featureNum
+            nodeNum = [featureNum, featureNum + 5, 1]
 
             if "weightInitMode" in self.params:
                 weightInitMode = self.params["weightInitMode"]
