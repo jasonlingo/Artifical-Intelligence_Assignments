@@ -9,7 +9,7 @@ class NeuralNetwork(Classifier):
     A neural network classifier with feed forward and back-propagation.
     """
 
-    def __init__(self, training_data, nodeNum, weightInitMode=None):
+    def __init__(self, training_data, nodeNum, weightInitMode=None, momentumFactor=0.0):
         # number of total training iteration
         self.ITERATION = 5000
 
@@ -20,7 +20,7 @@ class NeuralNetwork(Classifier):
         self.ALPHA = 0.01
 
         # decay rate for momentum
-        self.momentum_factor = 0.8
+        self.momentumFactor = momentumFactor
 
         # dictionary for momentum
         self.momentum = {}
@@ -174,7 +174,7 @@ class NeuralNetwork(Classifier):
                 lastMomentum = self.momentum[l]
             else:
                 lastMomentum = 0
-            self.theta[l] -= (thisMomentum + self.momentum_factor * lastMomentum)
+            self.theta[l] -= (thisMomentum + self.momentumFactor * lastMomentum)
             self.momentum[l] = thisMomentum
 
     def cost(self, labels, yHat):

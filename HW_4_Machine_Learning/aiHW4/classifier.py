@@ -54,11 +54,20 @@ class Classifier:
             m, n = training_data.shape
             attributes = [i for i in range(1, n)]  # attributes' indices
             attrValue = self.getAttrValue(training_data)
+
+            # check use of information gain or information gain ratio
             if "igMode" in self.params:
                 igMode = self.params["igMode"]
             else:
                 igMode = "ig"
-            self.clf = DecisionTree(igMode, training_data, attributes, None, attrValue)
+
+            # get the prune threshold
+            if "pruneThreshold" in self.params:
+                pruneThreshold = self.params["pruneThreshold"]
+            else:
+                pruneThreshold = 0.0
+
+            self.clf = DecisionTree(igMode, training_data, attributes, None, attrValue, pruneThreshold)
             self.clf.train()
             self.test(training_data, "training")
 
@@ -89,7 +98,13 @@ class Classifier:
             else:
                 weightInitMode = None
 
-            self.clf = NeuralNetwork(training_data, nodeNum, weightInitMode)
+            # get the momentum factor
+            if "momentumFactor" in self.params:
+                momentumFactor = self.params["momentumFactor"]
+            else:
+                momentumFactor = 0.0
+
+            self.clf = NeuralNetwork(training_data, nodeNum, weightInitMode, momentumFactor)
             self.clf.train()
             self.test(training_data, "training")
 
@@ -123,6 +138,11 @@ class Classifier:
         countCorrect = {}
         countTotal = Counter(list(test_data[:, 0]))
 
+        labels = np.unique(test_data[:, 0])
+        for label in labels:
+            countCorrect[label] = 0
+            countPrediction[label] = 0
+
         for e in test_data:
             label = e[0]
             pred_label = self.predict(e)
@@ -141,11 +161,15 @@ class Classifier:
         accuracy = float(correct) / len(test_data)
         print "Predict counter:", countPrediction
         print "Correct counter:", countCorrect
+        print "Total counter", countTotal
         print "The accuracy for", mode, "is", accuracy
 
 
         for key in countPrediction.keys():
-            print "precision for key:", key, " = ", countCorrect[key] / float(countPrediction[key])
+            if countPrediction[key] == 0:
+                print "precision for key:", key, " = ", 0.0
+            else:
+                print "precision for key:", key, " = ", countCorrect[key] / float(countPrediction[key])
             print "recall for key:", key, "    = ", countCorrect[key] / float(countTotal[key])
         print
 

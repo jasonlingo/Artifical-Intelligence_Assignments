@@ -7,7 +7,7 @@ class DecisionTree(Classifier):
     """
     A decision tree classifier.
     """
-    def __init__(self, igMode, training_data, attributes, parentExample, attrValue):
+    def __init__(self, igMode, training_data, attributes, parentExample, attrValue, pruneThreshold=0.0):
         self.igMode = igMode
         self.example = training_data
         self.attributes = attributes
@@ -17,7 +17,7 @@ class DecisionTree(Classifier):
         self.subtree = {}
         self.attrIdx = None
 
-        self.pruneThreshold = 0.05
+        self.pruneThreshold = pruneThreshold
 
     def train(self):
         if self.example == []:
@@ -37,7 +37,7 @@ class DecisionTree(Classifier):
                     exs = [e for e in self.example if e[self.attrIdx] == v]
                     newAttr = self.attributes[:]
                     newAttr.remove(self.attrIdx)
-                    newTree = DecisionTree(self.igMode, exs, newAttr, self.example, self.attrValue).train()
+                    newTree = DecisionTree(self.igMode, exs, newAttr, self.example, self.attrValue, self.pruneThreshold).train()
                     self.subtree[v] = newTree
 
                 return self
@@ -166,7 +166,6 @@ class DecisionTree(Classifier):
         values = self.valueOfA(a, ex)
         iv = 0.0
         for v in values:
-        # for v in self.attrValue[a]:  # TODO: check which values we should use
             p = len([e for e in ex if e[a] == v]) / float(len(ex))
             if p == 0:
                 print p
