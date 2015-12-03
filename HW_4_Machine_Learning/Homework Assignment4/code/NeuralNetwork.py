@@ -1,8 +1,6 @@
 from classifier import Classifier
 import numpy as np
 import math
-from collections import Counter
-
 
 class NeuralNetwork(Classifier):
     """

@@ -8,18 +8,47 @@ class DecisionTree(Classifier):
     A decision tree classifier.
     """
     def __init__(self, igMode, training_data, attributes, parentExample, attrValue, pruneThreshold=0.0):
+        """
+        Args:
+            igMode: using imforation gain or information gain ratio
+            training_data: the given training data set
+            attributes: the all attribute indices
+            parentExample: the example of parent node
+            attrValue: the attribute values of each attribute
+            pruneThreshold: the threshold for pruning, when the information gain of information gain ratio
+            is less than this threshold, stop expand subtrees.
+        Returns:
+            a label or a decision tree
+        """
         self.igMode = igMode
         self.example = training_data
         self.attributes = attributes
         self.parentEx = parentExample
         self.attrValue = attrValue
-
-        self.subtree = {}
-        self.attrIdx = None
-
         self.pruneThreshold = pruneThreshold
 
+        # for storing subtree
+        self.subtree = {}
+        # for storing the attribute index for this tree node
+        self.attrIdx = None
+
     def train(self):
+        """
+        Decision tree training procedure:
+            - if the given example is empty, then return the pluralityValue of the examples of parent nodes
+            - else if the given example all has the same label, return the label
+            - else if the given available attribute index is empty, return the pluralityValue of
+              the given example for this node.
+            - else:
+                 1. find the attribute index that has the maximum information gain or information gain ratio among
+                    the given examples.
+                 2. if the maximum information gain (ratio) is less than the pruning threshold, then stop
+                    expanding subtrees and return the pluralityValue of the given examples.
+                 3. if the pruning is not performed, build a subtree for each value belongs to the attribute index
+                 4. after construct all the subtree, then return current node (self) to its parent node
+        Returns:
+
+        """
         if self.example == []:
             return self.pluralityValue(self.parentEx)
         elif self.hasSameLabel(self.example):
@@ -29,7 +58,6 @@ class DecisionTree(Classifier):
         else:
             self.attrIdx, ig = self.argmaxAIG(self.example)
 
-            # print ig
             if ig < self.pruneThreshold:
                 return self.pluralityValue(self.example)
             else:
@@ -64,7 +92,7 @@ class DecisionTree(Classifier):
 
     def pluralityValue(self, ex):
         """
-        Find the most common label of the given examples
+        Find the most common label among the given examples
         Args:
             ex: the given examples
         Returns:
@@ -167,15 +195,12 @@ class DecisionTree(Classifier):
         iv = 0.0
         for v in values:
             p = len([e for e in ex if e[a] == v]) / float(len(ex))
-            if p == 0:
-                print p
             iv += -p * math.log(p, 2)
         return iv
 
     def hasSameLabel(self, ex):
         """
         Check whether all the examples have the same label
-
         Args:
             ex: the given examples
         Return:
@@ -183,12 +208,3 @@ class DecisionTree(Classifier):
         """
         labels = [e[0] for e in ex]
         return len(set(labels)) == 1
-
-    def printtree(self, height):
-        print "height =", height
-        print self.subtree
-        for s in self.subtree:
-            print s
-            if isinstance(self.subtree[s], DecisionTree):
-                self.subtree[s].printtree(height+1)
-

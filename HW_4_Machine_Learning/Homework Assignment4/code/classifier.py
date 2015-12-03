@@ -159,9 +159,6 @@ class Classifier:
                 countPrediction[pred_label] = 1
 
         accuracy = float(correct) / len(test_data)
-        print "Predict counter:", countPrediction
-        print "Correct counter:", countCorrect
-        print "Total counter", countTotal
         print "The accuracy for", mode, "is", accuracy
 
 
@@ -175,7 +172,7 @@ class Classifier:
 
     def getAttrValue(self, ex):
         """
-        Find the attribute values in each attribute.
+        Find the attribute values for each attribute.
         Args:
             ex: given examples
         Returns: a dictionary where the keys are the attribute indices and the values are the attribute values.
